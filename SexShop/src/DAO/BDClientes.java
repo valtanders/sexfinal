@@ -31,7 +31,7 @@ public class BDClientes implements Interfaz{
         Conexion oCon = new Conexion();
         oCon.getConexion();
         int llave = 0;
-        String insert = "INSERT INTO cliente (fk_idDescuentoCli,notas,nombre,apellido,direccion,mail,telefono,dni,fechanac) Values (?,?,?,?,?,?,?,?,?)";
+        String insert = "INSERT INTO cliente (fk_idDescuentoCli,notas,nombre,apellido,direccion,mail,telefono,dni,fechanac,codigoCliente,fk_idEstados) Values (?,?,?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert, PreparedStatement.RETURN_GENERATED_KEYS);
             sentencia.setInt(1, cliente.getDescuento().getIdDescuentoCli());
@@ -43,6 +43,8 @@ public class BDClientes implements Interfaz{
             sentencia.setString(7, cliente.getTelefono());
             sentencia.setInt(8,cliente.getDni());
             sentencia.setDate(9, cliente.getFechanac());
+            sentencia.setString(10, cliente.getCodigoCliente());
+            sentencia.setInt(11, cliente.getEstado());
             sentencia.execute();
             ResultSet rs = sentencia.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -81,8 +83,8 @@ public class BDClientes implements Interfaz{
             Cliente cliente;
             DescuentoCli desc;
             while (rs.next()) {
-                desc = new DescuentoCli(rs.getInt(11), rs.getString(12), rs.getInt(13), rs.getFloat(14));
-                cliente = new Cliente(rs.getInt(1), desc, rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getInt(9), rs.getDate(10));
+                desc = new DescuentoCli(rs.getInt(13), rs.getString(14), rs.getInt(15), rs.getFloat(16));
+                cliente = new Cliente(rs.getInt(1), desc, rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getInt(9), rs.getDate(10),rs.getString(11),rs.getInt(12));
                 resp.put(cliente.getIdCliente(), cliente);
             }
             rs.close();

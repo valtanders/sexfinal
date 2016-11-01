@@ -20,8 +20,8 @@ public class ctrlABMClientes {
     BDClientes bdclientes = BDClientes.getIntance();
     
     
-    public int AgregarCliente(int desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha) throws SQLException{
-         return bdclientes.agregar(new Cliente(new DescuentoCli(desccli), notas, nom, ape, direc, mail, tel , dni, fecha));
+    public int AgregarCliente(int desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha, String codcli, int estado) throws SQLException{
+         return bdclientes.agregar(new Cliente(new DescuentoCli(desccli), notas, nom, ape, direc, mail, tel , dni, fecha, codcli, estado));
     };
     
     public ConcurrentHashMap TraerTodos() throws SQLException

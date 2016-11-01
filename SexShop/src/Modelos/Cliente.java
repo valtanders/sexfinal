@@ -12,6 +12,34 @@ import java.sql.Date;
  * @author Valtanders
  */
 public class Cliente {
+
+    /**
+     * @return the codigoCliente
+     */
+    public String getCodigoCliente() {
+        return codigoCliente;
+    }
+
+    /**
+     * @param codigoCliente the codigoCliente to set
+     */
+    public void setCodigoCliente(String codigoCliente) {
+        this.codigoCliente = codigoCliente;
+    }
+
+    /**
+     * @return the estado
+     */
+    public int getEstado() {
+        return estado;
+    }
+
+    /**
+     * @param estado the estado to set
+     */
+    public void setEstado(int estado) {
+        this.estado = estado;
+    }
     private int idCliente;
     private DescuentoCli descuento;
     private String notas;
@@ -22,10 +50,12 @@ public class Cliente {
     private String telefono;
     private int dni;
     private Date fechanac;
+    private String codigoCliente;
+    private int estado;
     
     public Cliente() {};
     
-    public Cliente(int id, DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha) {
+    public Cliente(int id, DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha, String codCli, int estado) {
         this.idCliente = id;
         this.descuento = desccli;
         this.notas = notas;
@@ -36,9 +66,11 @@ public class Cliente {
         this.telefono = tel;
         this.dni = dni;
         this.fechanac = fecha;
+        this.codigoCliente = codCli;
+        this.estado = estado;
     };
     
-    public Cliente(DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha) {
+    public Cliente(DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha,String codCli, int estado) {
         this.descuento = desccli;
         this.notas = notas;
         this.nombre = nom;
@@ -48,6 +80,8 @@ public class Cliente {
         this.telefono = tel;
         this.dni = dni;
         this.fechanac = fecha;
+        this.codigoCliente = codCli;
+        this.estado = estado;
     };
 
     /**
