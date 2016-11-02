@@ -1,16 +1,16 @@
 package Vistas;
 
+import Controladoras.ctrlABMUsuarios;
 import DAO.Conexion;
+import Modelos.Usuario;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 
 public class Login extends javax.swing.JFrame {
     
-    private Conexion conexion;
+    private ctrlABMUsuarios ctrlusuarios = new ctrlABMUsuarios();
     public Login() {
         this.getContentPane().setBackground(Color.white);
-        conexion = new Conexion();
-        conexion.getConexion();
         initComponents();
     }
 
@@ -107,9 +107,9 @@ public class Login extends javax.swing.JFrame {
         
         try {                                        
             if( !"".equals(txtUser.getText()) && txtPass.getText() != ""){
-                // traer usuario de BD userLogueado = loguin.traeUsuarioLogueado(txtUser.getText(), txtPass.getText());
+                Usuario userLogueado = ctrlusuarios.traerogueado(txtUser.getText(), txtPass.getText());
                 //ver tipo de ROL
-               if("Admin".equals(txtUser.getText()) ){
+               if(userLogueado != null && userLogueado.getNombre().equals(txtUser.getText()) && userLogueado.getPassword().equals(txtPass.getText())){
                    Principal principal = new Principal();
                    principal.show();
                    this.dispose();

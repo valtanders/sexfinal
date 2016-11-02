@@ -50,12 +50,21 @@ public class Cliente {
     private String telefono;
     private int dni;
     private Date fechanac;
+<<<<<<< HEAD
     private String codigoCliente;
     private int estado;
     
     public Cliente() {};
     
     public Cliente(int id, DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha, String codCli, int estado) {
+=======
+    private String codigo;
+    private Estado estado;
+    
+    public Cliente() {};
+    
+    public Cliente(int id, DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha,String cod,Estado est) {
+>>>>>>> Bruno
         this.idCliente = id;
         this.descuento = desccli;
         this.notas = notas;
@@ -66,11 +75,19 @@ public class Cliente {
         this.telefono = tel;
         this.dni = dni;
         this.fechanac = fecha;
+<<<<<<< HEAD
         this.codigoCliente = codCli;
         this.estado = estado;
     };
     
     public Cliente(DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha,String codCli, int estado) {
+=======
+        this.codigo = cod;
+        this.estado = est;
+    };
+    
+    public Cliente(DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha,String cod,Estado est) {
+>>>>>>> Bruno
         this.descuento = desccli;
         this.notas = notas;
         this.nombre = nom;
@@ -80,8 +97,13 @@ public class Cliente {
         this.telefono = tel;
         this.dni = dni;
         this.fechanac = fecha;
+<<<<<<< HEAD
         this.codigoCliente = codCli;
         this.estado = estado;
+=======
+        this.codigo = cod;
+        this.estado = est;
+>>>>>>> Bruno
     };
 
     /**
@@ -215,6 +237,34 @@ public class Cliente {
      */
     public void setDescuento(DescuentoCli descuento) {
         this.descuento = descuento;
+    }
+
+    /**
+     * @return the estado
+     */
+    public Estado getEstado() {
+        return estado;
+    }
+
+    /**
+     * @param estado the estado to set
+     */
+    public void setEstado(Estado estado) {
+        this.estado = estado;
+    }
+
+    /**
+     * @return the codigo
+     */
+    public String getCodigo() {
+        return codigo;
+    }
+
+    /**
+     * @param codigo the codigo to set
+     */
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
     
     
