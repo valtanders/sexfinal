@@ -9,6 +9,7 @@ import Controladoras.ctrlABMClientes;
 import Controladoras.ctrlABMUsuarios;
 import Modelos.Cliente;
 import Modelos.Estado;
+import Modelos.Usuario;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -38,49 +39,57 @@ public class Principal extends javax.swing.JFrame {
     private ctrlABMClientes ctrlclientes = new ctrlABMClientes();
     private ctrlABMUsuarios ctrlusuarios = new ctrlABMUsuarios();
     
-    public Principal() {
+    public Principal() {}
+    
+    public Principal(Usuario user) {
         this.getContentPane().setBackground(Color.WHITE);
         initComponents();
-        lblClienteEstado.setHorizontalAlignment(SwingConstants.CENTER);
-        Calendar calendar = new GregorianCalendar();
-        jdcClientesFechaNac.setCalendar(calendar);
-        try { 
-            listaClientes = ctrlclientes.TraerTodos();
-        } catch (SQLException ex) {
-            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        if (listaClientes != null){
-            DefaultTableModel dtm = new DefaultTableModel(new Object[] { "Codigo", "Nombre", "Direccion" }, 0);
-            for (Iterator it = listaClientes.entrySet().iterator(); it.hasNext();) {
-                ConcurrentHashMap.Entry<?,?> entry = (ConcurrentHashMap.Entry<?,?>) it.next();
-                dtm.addRow(new Object[] {entry.getKey(), ((Cliente)entry.getValue()).getApellido()+", "+((Cliente)entry.getValue()).getNombre(),((Cliente)entry.getValue()).getDireccion()});
+        if(user.getRol() == 1){
+            lblClienteEstado.setHorizontalAlignment(SwingConstants.CENTER);
+            Calendar calendar = new GregorianCalendar();
+            jdcClientesFechaNac.setCalendar(calendar);
+            try { 
+                listaClientes = ctrlclientes.TraerTodos();
+            } catch (SQLException ex) {
+                Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
             }
-            tblClientestodos.setModel(dtm);
-            tblClientestodos.addMouseListener(new MouseAdapter(){
-                public void mouseClicked(MouseEvent e) {
-                SimpleDateFormat fechaformat = new SimpleDateFormat("dd/MM/yyyy");
-                int fila = tblClientestodos.rowAtPoint(e.getPoint());
-                int columna = tblClientestodos.columnAtPoint(e.getPoint());
-                if ((fila > -1) && (columna > -1)){
-                    Cliente nombre = (Cliente)listaClientes.get(tblClientestodos.getModel().getValueAt(fila, 0));
-                    lblClientesCodigo.setText(nombre.getCodigo());
-                    if(nombre.getEstado().getDescripcion().equals("activo")){
-                        lblClienteEstado.setForeground(Color.green);
-                        lblClienteEstado.setText(nombre.getEstado().getDescripcion());
-                    } else {
-                        lblClienteEstado.setForeground(Color.red);
-                        lblClienteEstado.setText(nombre.getEstado().getDescripcion());
-                    }                     
-                    lblClientesNombre.setText(nombre.getApellido()+", "+nombre.getNombre());
-                    lblClientesDireccion.setText(nombre.getDireccion());
-                    lblClientesDNI.setText(String.valueOf(nombre.getDni()));
-                    lblClientesTelefono.setText(nombre.getTelefono());
-                    lblClientesFechaNac.setText(fechaformat.format(nombre.getFechanac()));
-                    lblClientesMail.setText(nombre.getMail());
-                    lblClientesNotas.setText(nombre.getNotas());
-                    }
+            if (listaClientes != null){
+                DefaultTableModel dtm = new DefaultTableModel(new Object[] { "Codigo", "Nombre", "Direccion" }, 0);
+                for (Iterator it = listaClientes.entrySet().iterator(); it.hasNext();) {
+                    ConcurrentHashMap.Entry<?,?> entry = (ConcurrentHashMap.Entry<?,?>) it.next();
+                    dtm.addRow(new Object[] {entry.getKey(), ((Cliente)entry.getValue()).getApellido()+", "+((Cliente)entry.getValue()).getNombre(),((Cliente)entry.getValue()).getDireccion()});
                 }
-            });
+                tblClientestodos.setModel(dtm);
+                tblClientestodos.addMouseListener(new MouseAdapter(){
+                    public void mouseClicked(MouseEvent e) {
+                        SimpleDateFormat fechaformat = new SimpleDateFormat("dd/MM/yyyy");
+                        int fila = tblClientestodos.rowAtPoint(e.getPoint());
+                        int columna = tblClientestodos.columnAtPoint(e.getPoint());
+                        if ((fila > -1) && (columna > -1)){
+                            Cliente nombre = (Cliente)listaClientes.get(tblClientestodos.getModel().getValueAt(fila, 0));
+                            lblClientesCodigo.setText(nombre.getCodigo());
+                            if(nombre.getEstado().getDescripcion().equals("activo")){
+                                lblClienteEstado.setForeground(Color.green);
+                                lblClienteEstado.setText(nombre.getEstado().getDescripcion());
+                            } else {
+                                lblClienteEstado.setForeground(Color.red);
+                                lblClienteEstado.setText(nombre.getEstado().getDescripcion());
+                            }                     
+                            lblClientesNombre.setText(nombre.getApellido()+", "+nombre.getNombre());
+                            lblClientesDireccion.setText(nombre.getDireccion());
+                            lblClientesDNI.setText(String.valueOf(nombre.getDni()));
+                            lblClientesTelefono.setText(nombre.getTelefono());
+                            lblClientesFechaNac.setText(fechaformat.format(nombre.getFechanac()));
+                            lblClientesMail.setText(nombre.getMail());
+                            lblClientesNotas.setText(nombre.getNotas());
+                        }
+                    }
+                });
+            }
+        } else {
+            TabContent.setEnabledAt(TabContent.indexOfTab("USUARIOS"), false);
+            TabContent.setEnabledAt(TabContent.indexOfTab("PROVEEDORES"), false);
+            TabContent.setEnabledAt(TabContent.indexOfTab("CLIENTES"), false);
         }
         
         

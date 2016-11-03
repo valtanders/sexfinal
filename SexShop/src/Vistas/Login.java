@@ -110,7 +110,7 @@ public class Login extends javax.swing.JFrame {
                 Usuario userLogueado = ctrlusuarios.traerogueado(txtUser.getText(), txtPass.getText());
                 //ver tipo de ROL
                if(userLogueado != null && userLogueado.getNombre().equals(txtUser.getText()) && userLogueado.getPassword().equals(txtPass.getText())){
-                   Principal principal = new Principal();
+                   Principal principal = new Principal(userLogueado);
                    principal.show();
                    this.dispose();
                }
