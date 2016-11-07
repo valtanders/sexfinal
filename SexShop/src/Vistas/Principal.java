@@ -51,15 +51,20 @@ public class Principal extends javax.swing.JFrame {
             try { 
                 listaClientes = ctrlclientes.TraerTodos();
             } catch (SQLException ex) {
-                Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
             }
             if (listaClientes != null){
-                DefaultTableModel dtm = new DefaultTableModel(new Object[] { "Codigo", "Nombre", "Direccion" }, 0);
+                DefaultTableModel dtm = new DefaultTableModel(new Object[] { "id","Codigo", "Nombre", "Direccion" }, 0) {public boolean isCellEditable(int rowIndex,int columnIndex){return false;}};
                 for (Iterator it = listaClientes.entrySet().iterator(); it.hasNext();) {
                     ConcurrentHashMap.Entry<?,?> entry = (ConcurrentHashMap.Entry<?,?>) it.next();
-                    dtm.addRow(new Object[] {entry.getKey(), ((Cliente)entry.getValue()).getApellido()+", "+((Cliente)entry.getValue()).getNombre(),((Cliente)entry.getValue()).getDireccion()});
+                    dtm.addRow(new Object[] {entry.getKey(),((Cliente)entry.getValue()).getCodigo(), ((Cliente)entry.getValue()).getApellido()+", "+((Cliente)entry.getValue()).getNombre(),((Cliente)entry.getValue()).getDireccion()});
+                    
                 }
                 tblClientestodos.setModel(dtm);
+                tblClientestodos.getColumn("id").setPreferredWidth(0);
+                tblClientestodos.getColumn("id").setMinWidth(0);
+                tblClientestodos.getColumn("id").setWidth(0);
+                tblClientestodos.getColumn("id").setMaxWidth(0);
                 tblClientestodos.addMouseListener(new MouseAdapter(){
                     public void mouseClicked(MouseEvent e) {
                         SimpleDateFormat fechaformat = new SimpleDateFormat("dd/MM/yyyy");
@@ -74,7 +79,8 @@ public class Principal extends javax.swing.JFrame {
                             } else {
                                 lblClienteEstado.setForeground(Color.red);
                                 lblClienteEstado.setText(nombre.getEstado().getDescripcion());
-                            }                     
+                            }
+                            lblClientesId.setText(String.valueOf(nombre.getIdCliente()));
                             lblClientesNombre.setText(nombre.getApellido()+", "+nombre.getNombre());
                             lblClientesDireccion.setText(nombre.getDireccion());
                             lblClientesDNI.setText(String.valueOf(nombre.getDni()));
@@ -141,6 +147,10 @@ public class Principal extends javax.swing.JFrame {
         lblClientesNotas = new javax.swing.JLabel();
         lblClienteEstado = new javax.swing.JLabel();
         lblClientesCodigo = new javax.swing.JLabel();
+        btnClintesModificar = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jLabel23 = new javax.swing.JLabel();
+        lblClientesId = new javax.swing.JLabel();
         tabCaja = new javax.swing.JPanel();
         tabUsuarios = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -363,7 +373,7 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel20)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 187, Short.MAX_VALUE)
                 .addComponent(btnClientesAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -383,6 +393,17 @@ public class Principal extends javax.swing.JFrame {
 
         lblClienteEstado.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
 
+        btnClintesModificar.setText("Modificar");
+        btnClintesModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClintesModificarActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Eliminar");
+
+        lblClientesId.setText("id");
+
         javax.swing.GroupLayout tabClientesLayout = new javax.swing.GroupLayout(tabClientes);
         tabClientes.setLayout(tabClientesLayout);
         tabClientesLayout.setHorizontalGroup(
@@ -394,25 +415,34 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE)
                     .addGroup(tabClientesLayout.createSequentialGroup()
-                        .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(tabClientesLayout.createSequentialGroup()
-                                .addComponent(lblClientesDNI, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(lblClientesFechaNac, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(lblClientesMail, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lblClientesNotas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(tabClientesLayout.createSequentialGroup()
-                                .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblClientesNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblClientesCodigo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(tabClientesLayout.createSequentialGroup()
-                                        .addComponent(lblClientesDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(lblClientesTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(lblClienteEstado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addComponent(btnClintesModificar)
+                                .addGap(374, 374, 374)
+                                .addComponent(jButton2))
+                            .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(tabClientesLayout.createSequentialGroup()
+                                    .addComponent(lblClientesDNI, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(lblClientesFechaNac, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(lblClientesMail, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(lblClientesNotas, javax.swing.GroupLayout.PREFERRED_SIZE, 558, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(tabClientesLayout.createSequentialGroup()
+                                    .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(lblClientesNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lblClientesCodigo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(tabClientesLayout.createSequentialGroup()
+                                            .addComponent(lblClientesDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addComponent(lblClientesTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(lblClienteEstado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel23)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblClientesId, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -423,25 +453,38 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE)
                     .addGroup(tabClientesLayout.createSequentialGroup()
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 449, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 380, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblClienteEstado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(tabClientesLayout.createSequentialGroup()
-                                .addGap(0, 11, Short.MAX_VALUE)
-                                .addComponent(lblClientesCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblClientesNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblClientesDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblClientesTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblClientesDNI, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblClientesFechaNac, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblClientesMail, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lblClientesNotas, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblClienteEstado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(tabClientesLayout.createSequentialGroup()
+                                        .addGap(0, 11, Short.MAX_VALUE)
+                                        .addComponent(lblClientesCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(tabClientesLayout.createSequentialGroup()
+                                        .addComponent(jLabel23)
+                                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblClientesNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblClientesDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblClientesTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblClientesDNI, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblClientesFechaNac, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblClientesMail, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(lblClientesNotas, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(btnClintesModificar)
+                                    .addComponent(jButton2))
+                                .addGap(19, 19, 19))
+                            .addGroup(tabClientesLayout.createSequentialGroup()
+                                .addComponent(lblClientesId, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
 
@@ -858,32 +901,13 @@ public class Principal extends javax.swing.JFrame {
         login.show();
     }//GEN-LAST:event_none
 
-    private void btnArticulosAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnArticulosAceptarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnArticulosAceptarActionPerformed
-
     private void btnProveedoresAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProveedoresAceptarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnProveedoresAceptarActionPerformed
 
-    private void btnClientesAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClientesAceptarActionPerformed
-        int key = 0;
-        java.util.Date utilDate = (java.util.Date)jdcClientesFechaNac.getDate();
-        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-        try {
-            key = ctrlclientes.AgregarCliente(1, txtClientesNotas.getText(), txtClientesNombre.getText(), txtClientesApellido.getText(), txtClientesDireccion.getText(), txtClientesEmail.getText(), txtClientesTelefono.getText(), Integer.valueOf(txtClientesDni.getText()), txtClientesCodigo.getText(),sqlDate);
-        } catch (SQLException ex) {
-            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
-         }
-        try {
-            listaClientes.put(key, new Cliente(key,ctrlclientes.traerDescuento(1),txtClientesNotas.getText(), txtClientesNombre.getText(), txtClientesApellido.getText(), txtClientesDireccion.getText(), txtClientesEmail.getText(), txtClientesTelefono.getText(), Integer.valueOf(txtClientesDni.getText()),sqlDate,txtClientesCodigo.getText(), new Estado(1)));
-        } catch (SQLException ex) {
-            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        DefaultTableModel dtm = (DefaultTableModel)tblClientestodos.getModel();
-        dtm.addRow(new Object[] {key, txtClientesNombre.getText()+", "+txtClientesApellido.getText(),txtClientesDireccion.getText()});
-
-    }//GEN-LAST:event_btnClientesAceptarActionPerformed
+    private void btnArticulosAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnArticulosAceptarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnArticulosAceptarActionPerformed
 
     private void btnUsuariosAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsuariosAceptarActionPerformed
         int rol = 0;
@@ -904,7 +928,7 @@ public class Principal extends javax.swing.JFrame {
                     chkUsuariosAdmin.setSelected(false);
                     JOptionPane.showMessageDialog(null, "El usuario se genero correctamente.", "Succes", JOptionPane.INFORMATION_MESSAGE);
                 } catch (SQLException ex) {
-                    Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
                 }
             }
 
@@ -913,6 +937,53 @@ public class Principal extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Complete los Campos.", "Security", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnUsuariosAceptarActionPerformed
+
+    private void btnClientesAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClientesAceptarActionPerformed
+        int key = 0;
+        int dni = 0;
+        java.util.Date utilDate = (java.util.Date)jdcClientesFechaNac.getDate();
+        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+        if(!txtClientesDni.getText().equals("")){
+            dni = Integer.valueOf(txtClientesDni.getText());
+        }
+        if(txtClientesCodigo.getText().equals("") || txtClientesNombre.getText().equals("")){
+            JOptionPane.showMessageDialog(null, "codigo o nombre de usuario vacio, complete los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            try {
+                if(ctrlclientes.BuscaCodigo(txtClientesCodigo.getText()))
+                    JOptionPane.showMessageDialog(null, "codigo Ingesado ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+                else {
+                    try {
+                        key = ctrlclientes.AgregarCliente(1, txtClientesNotas.getText(), txtClientesNombre.getText(), txtClientesApellido.getText(), txtClientesDireccion.getText(), txtClientesEmail.getText(), txtClientesTelefono.getText(), dni, txtClientesCodigo.getText(),sqlDate,txtClientesCodigo.getText(),1);
+                        DefaultTableModel dtm = (DefaultTableModel)tblClientestodos.getModel();
+                        dtm.addRow(new Object[] {key, txtClientesCodigo.getText(), txtClientesNombre.getText()+", "+txtClientesApellido.getText(),txtClientesDireccion.getText()});
+                        txtClientesCodigo.setText("");
+                        txtClientesNombre.setText("");
+                        txtClientesApellido.setText("");
+                        txtClientesDni.setText("");
+                        txtClientesDireccion.setText("");
+                        txtClientesTelefono.setText("");
+                        txtClientesEmail.setText("");
+                        txtClientesNotas.setText("");
+                    } catch (SQLException ex) {
+                        JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+            }
+            try {
+                listaClientes.put(key, new Cliente(key,ctrlclientes.traerDescuento(1),txtClientesNotas.getText(), txtClientesNombre.getText(), txtClientesApellido.getText(), txtClientesDireccion.getText(), txtClientesEmail.getText(), txtClientesTelefono.getText(), dni,sqlDate,txtClientesCodigo.getText(), new Estado(1)));
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+            }
+
+        }
+    }//GEN-LAST:event_btnClientesAceptarActionPerformed
+
+    private void btnClintesModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClintesModificarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnClintesModificarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -954,9 +1025,11 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTabbedPane TabContent;
     private java.awt.Button btnArticulosAceptar;
     private java.awt.Button btnClientesAceptar;
+    private javax.swing.JButton btnClintesModificar;
     private java.awt.Button btnProveedoresAceptar;
     private java.awt.Button btnUsuariosAceptar;
     private javax.swing.JCheckBox chkUsuariosAdmin;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -972,6 +1045,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1005,6 +1079,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JLabel lblClientesDNI;
     private javax.swing.JLabel lblClientesDireccion;
     private javax.swing.JLabel lblClientesFechaNac;
+    private javax.swing.JLabel lblClientesId;
     private javax.swing.JLabel lblClientesMail;
     private javax.swing.JLabel lblClientesNombre;
     private javax.swing.JLabel lblClientesNotas;

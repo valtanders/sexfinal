@@ -166,32 +166,43 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jScrollPane4" pref="619" max="32767" attributes="0"/>
-                          <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="1" attributes="0">
                                   <Group type="102" attributes="0">
-                                      <Component id="lblClientesDNI" min="-2" pref="178" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="lblClientesFechaNac" min="-2" pref="178" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="lblClientesMail" min="-2" pref="178" max="-2" attributes="0"/>
+                                      <Component id="btnClintesModificar" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="374" max="-2" attributes="0"/>
+                                      <Component id="jButton2" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="lblClientesNotas" alignment="0" max="32767" attributes="0"/>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="lblClientesNombre" min="-2" pref="178" max="-2" attributes="0"/>
-                                          <Component id="lblClientesCodigo" alignment="1" min="-2" pref="178" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" attributes="0">
+                                          <Component id="lblClientesDNI" min="-2" pref="178" max="-2" attributes="0"/>
+                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                          <Component id="lblClientesFechaNac" min="-2" pref="178" max="-2" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="lblClientesMail" min="-2" pref="178" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                          <Group type="102" attributes="0">
-                                              <Component id="lblClientesDireccion" min="-2" pref="178" max="-2" attributes="0"/>
-                                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                              <Component id="lblClientesTelefono" min="-2" pref="178" max="-2" attributes="0"/>
+                                      <Component id="lblClientesNotas" alignment="0" min="-2" pref="558" max="-2" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Component id="lblClientesNombre" min="-2" pref="178" max="-2" attributes="0"/>
+                                              <Component id="lblClientesCodigo" alignment="1" min="-2" pref="178" max="-2" attributes="0"/>
                                           </Group>
-                                          <Component id="lblClienteEstado" max="32767" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                              <Group type="102" attributes="0">
+                                                  <Component id="lblClientesDireccion" min="-2" pref="178" max="-2" attributes="0"/>
+                                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                                  <Component id="lblClientesTelefono" min="-2" pref="178" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Component id="lblClienteEstado" max="32767" attributes="0"/>
+                                          </Group>
                                       </Group>
                                   </Group>
                               </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jLabel23" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="lblClientesId" min="-2" pref="0" max="-2" attributes="0"/>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
@@ -206,29 +217,47 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jPanel5" pref="602" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
-                              <Component id="jScrollPane4" min="-2" pref="449" max="-2" attributes="0"/>
+                              <Component id="jScrollPane4" min="-2" pref="380" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="lblClienteEstado" max="32767" attributes="0"/>
                                   <Group type="102" attributes="0">
-                                      <EmptySpace min="0" pref="11" max="32767" attributes="0"/>
-                                      <Component id="lblClientesCodigo" min="-2" pref="18" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="lblClienteEstado" max="32767" attributes="0"/>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <EmptySpace min="0" pref="11" max="32767" attributes="0"/>
+                                              <Component id="lblClientesCodigo" min="-2" pref="18" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" attributes="0">
+                                              <Component id="jLabel23" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="lblClientesNombre" min="-2" pref="18" max="-2" attributes="0"/>
+                                          <Component id="lblClientesDireccion" min="-2" pref="18" max="-2" attributes="0"/>
+                                          <Component id="lblClientesTelefono" min="-2" pref="18" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="lblClientesDNI" min="-2" pref="18" max="-2" attributes="0"/>
+                                          <Component id="lblClientesFechaNac" min="-2" pref="18" max="-2" attributes="0"/>
+                                          <Component id="lblClientesMail" min="-2" pref="18" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="lblClientesNotas" min="-2" pref="52" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="btnClintesModificar" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jButton2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="lblClientesId" min="-2" pref="0" max="-2" attributes="0"/>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="lblClientesNombre" min="-2" pref="18" max="-2" attributes="0"/>
-                                  <Component id="lblClientesDireccion" min="-2" pref="18" max="-2" attributes="0"/>
-                                  <Component id="lblClientesTelefono" min="-2" pref="18" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="lblClientesDNI" min="-2" pref="18" max="-2" attributes="0"/>
-                                  <Component id="lblClientesFechaNac" min="-2" pref="18" max="-2" attributes="0"/>
-                                  <Component id="lblClientesMail" min="-2" pref="18" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="lblClientesNotas" min="-2" pref="52" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -367,7 +396,7 @@
                               <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
                               <Component id="jScrollPane2" min="-2" pref="98" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace pref="187" max="32767" attributes="0"/>
                           <Component id="btnClientesAceptar" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -539,6 +568,26 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="lblClientesCodigo">
+            </Component>
+            <Component class="javax.swing.JButton" name="btnClintesModificar">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Modificar"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnClintesModificarActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="jButton2">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Eliminar"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel23">
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblClientesId">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="id"/>
+              </Properties>
             </Component>
           </SubComponents>
         </Container>

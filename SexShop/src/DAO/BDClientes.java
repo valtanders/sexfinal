@@ -32,7 +32,7 @@ public class BDClientes implements Interfaz{
         Conexion oCon = new Conexion();
         oCon.getConexion();
         int llave = 0;
-        String insert = "INSERT INTO cliente (fk_idDescuentoCli,notas,nombre,apellido,direccion,mail,telefono,dni,fechanac) Values (?,?,?,?,?,?,?,?,?)";
+        String insert = "INSERT INTO cliente (fk_idDescuentoCli,notas,nombre,apellido,direccion,mail,telefono,dni,fechanac,codigoCliente,fk_idEstados) Values (?,?,?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert, PreparedStatement.RETURN_GENERATED_KEYS);
             sentencia.setInt(1, cliente.getDescuento().getIdDescuentoCli());
@@ -44,6 +44,8 @@ public class BDClientes implements Interfaz{
             sentencia.setString(7, cliente.getTelefono());
             sentencia.setInt(8,cliente.getDni());
             sentencia.setDate(9, cliente.getFechanac());
+            sentencia.setString(10, cliente.getCodigo());
+            sentencia.setInt(11,cliente.getEstado().getId());
             sentencia.execute();
             ResultSet rs = sentencia.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -60,7 +62,8 @@ public class BDClientes implements Interfaz{
 
     @Override
     public void modificar(Object valor) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Conexion oCon = new Conexion();
+        
     }
 
     @Override
@@ -120,5 +123,29 @@ public class BDClientes implements Interfaz{
             return desccli;
         }
     
+    }
+    
+    public boolean BuscaCodigo(String cod) throws SQLException {
+        Conexion oCon = new Conexion();
+        ResultSet rs = null;
+        String codigo = "";
+        boolean codrepetido = false;
+        oCon.getConexion();
+        String select = "Select codigoCliente from cliente where codigoCliente = ?";
+        try {
+            PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(select);
+            sentencia.setString(1, cod);
+            rs = sentencia.executeQuery();
+            while (rs.next()) {
+                codigo = rs.getString(1);
+            }
+            if (!codigo.equals(""))
+                codrepetido = true;
+        } catch (SQLException e) {
+            e.printStackTrace();            
+        } finally {
+            oCon.close();
+            return codrepetido;
+        }
     }
 }
