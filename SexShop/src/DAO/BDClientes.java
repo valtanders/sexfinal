@@ -61,9 +61,32 @@ public class BDClientes implements Interfaz{
     }
 
     @Override
-    public void modificar(Object valor) throws SQLException {
+    public Cliente modificar(Object valor) throws SQLException {
         Conexion oCon = new Conexion();
-        
+        Cliente cliente = (Cliente)valor;
+        oCon.getConexion();
+        String update = "update cliente set fk_idDescuentoCli = ?,notas = ?,nombre = ?,apellido = ?,direccion = ?,mail = ?,telefono = ?,dni = ?,fechanac = ?,fk_idEstados = ? where idCliente = ?";
+        try {
+            PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(update);
+            sentencia.setInt(1,cliente.getDescuento().getIdDescuentoCli());
+            sentencia.setString(2, cliente.getNotas());
+            sentencia.setString(3, cliente.getNombre());
+            sentencia.setString(4, cliente.getApellido());
+            sentencia.setString(5, cliente.getDireccion());
+            sentencia.setString(6, cliente.getMail());
+            sentencia.setString(7, cliente.getTelefono());
+            sentencia.setInt(8,cliente.getDni());
+            sentencia.setDate(9, cliente.getFechanac());
+            sentencia.setInt(10,cliente.getEstado().getId());
+            sentencia.setInt(11,cliente.getIdCliente());
+            sentencia.execute();
+            sentencia.close();
+        } catch (SQLException e) {
+            e.printStackTrace();            
+        } finally {
+            oCon.close();
+            return cliente;
+        }
     }
 
     @Override
@@ -146,6 +169,56 @@ public class BDClientes implements Interfaz{
         } finally {
             oCon.close();
             return codrepetido;
+        }
+    }
+    
+    public Cliente traeclienteporid(int id) throws SQLException{
+        Conexion oCon = new Conexion();
+        ResultSet rs = null;
+        Cliente cliente = null;
+        Estado est = null;
+        DescuentoCli desc = null;
+        oCon.getConexion();
+        String select = "SELECT C.idcliente,C.notas,C.nombre,C.apellido,C.direccion,C.mail,C.telefono,C.dni,C.fechanac,C.codigoCliente, DC.idDescuentoCli, DC.descripcion, DC.porcentaje, DC.importe,E.idEstados,E.Descripcion  FROM cliente C INNER JOIN descuentocli DC ON idDescuentoCli = C.fk_idDescuentoCli INNER JOIN estados E on idEstados = C.fk_idEstados where C.idcliente = ?";
+        try {
+            PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(select);
+            sentencia.setInt(1, id);
+            rs = sentencia.executeQuery();
+            while (rs.next()) {
+                est = new Estado(rs.getInt(15),rs.getString(16));
+                desc = new DescuentoCli(rs.getInt(11), rs.getString(12), rs.getInt(13), rs.getFloat(14));
+                cliente = new Cliente(rs.getInt(1), desc, rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getDate(9),rs.getString(10),est);
+            }
+            rs.close();
+            sentencia.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            oCon.close();
+            return cliente;
+        }
+        
+    }
+    
+    public ConcurrentHashMap traerDescuentos() throws SQLException {
+        Conexion oCon = new Conexion();
+        ResultSet rs = null;
+        DescuentoCli descli = null;
+        ConcurrentHashMap lista = new ConcurrentHashMap();
+        oCon.getConexion();
+        String select = "Select * from descuentocli";
+        try{
+            PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(select);
+            rs = sentencia.executeQuery();
+            while (rs.next()){
+                descli = new DescuentoCli(rs.getInt(1),rs.getString(2),rs.getInt(3),rs.getFloat(4));
+                lista.put(descli.getIdDescuentoCli(), descli);
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            oCon.close();
+            return lista;
         }
     }
 }

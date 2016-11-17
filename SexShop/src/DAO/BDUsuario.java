@@ -5,6 +5,7 @@
  */
 package DAO;
 
+import Modelos.Cliente;
 import Modelos.Usuario;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -54,7 +55,7 @@ public class BDUsuario implements Interfaz {
     }
 
     @Override
-    public void modificar(Object valor) throws SQLException {
+    public Cliente modificar(Object valor) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

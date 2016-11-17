@@ -55,6 +55,20 @@ public class Cliente {
         this.codigo = cod;
         this.estado = est;
     };
+    
+    public Cliente(int id,DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha,Estado est) {
+        this.idCliente = id;
+        this.descuento = desccli;
+        this.notas = notas;
+        this.nombre = nom;
+        this.apellido = ape;
+        this.direccion = direc;
+        this.mail = mail;
+        this.telefono = tel;
+        this.dni = dni;
+        this.fechanac = fecha;
+        this.estado = est;
+    };
 
     /**
      * @return the idCliente

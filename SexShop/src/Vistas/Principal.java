@@ -13,6 +13,8 @@ import Modelos.Usuario;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -38,12 +40,15 @@ public class Principal extends javax.swing.JFrame {
     
     private ctrlABMClientes ctrlclientes = new ctrlABMClientes();
     private ctrlABMUsuarios ctrlusuarios = new ctrlABMUsuarios();
+    private int idCliente;
+    private int filaSeleccionada;
     
     public Principal() {}
     
     public Principal(Usuario user) {
         this.getContentPane().setBackground(Color.WHITE);
         initComponents();
+        idCliente = 0;
         if(user.getRol() == 1){
             lblClienteEstado.setHorizontalAlignment(SwingConstants.CENTER);
             Calendar calendar = new GregorianCalendar();
@@ -71,6 +76,7 @@ public class Principal extends javax.swing.JFrame {
                         int fila = tblClientestodos.rowAtPoint(e.getPoint());
                         int columna = tblClientestodos.columnAtPoint(e.getPoint());
                         if ((fila > -1) && (columna > -1)){
+                            filaSeleccionada = fila;
                             Cliente nombre = (Cliente)listaClientes.get(tblClientestodos.getModel().getValueAt(fila, 0));
                             lblClientesCodigo.setText(nombre.getCodigo());
                             if(nombre.getEstado().getDescripcion().equals("activo")){
@@ -80,7 +86,7 @@ public class Principal extends javax.swing.JFrame {
                                 lblClienteEstado.setForeground(Color.red);
                                 lblClienteEstado.setText(nombre.getEstado().getDescripcion());
                             }
-                            lblClientesId.setText(String.valueOf(nombre.getIdCliente()));
+                            idCliente = nombre.getIdCliente();
                             lblClientesNombre.setText(nombre.getApellido()+", "+nombre.getNombre());
                             lblClientesDireccion.setText(nombre.getDireccion());
                             lblClientesDNI.setText(String.valueOf(nombre.getDni()));
@@ -148,7 +154,7 @@ public class Principal extends javax.swing.JFrame {
         lblClienteEstado = new javax.swing.JLabel();
         lblClientesCodigo = new javax.swing.JLabel();
         btnClintesModificar = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnClientesElminar = new javax.swing.JButton();
         jLabel23 = new javax.swing.JLabel();
         lblClientesId = new javax.swing.JLabel();
         tabCaja = new javax.swing.JPanel();
@@ -400,7 +406,12 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Eliminar");
+        btnClientesElminar.setText("Eliminar");
+        btnClientesElminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClientesElminarActionPerformed(evt);
+            }
+        });
 
         lblClientesId.setText("id");
 
@@ -419,7 +430,7 @@ public class Principal extends javax.swing.JFrame {
                             .addGroup(tabClientesLayout.createSequentialGroup()
                                 .addComponent(btnClintesModificar)
                                 .addGap(374, 374, 374)
-                                .addComponent(jButton2))
+                                .addComponent(btnClientesElminar))
                             .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(tabClientesLayout.createSequentialGroup()
                                     .addComponent(lblClientesDNI, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -480,7 +491,7 @@ public class Principal extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(btnClintesModificar)
-                                    .addComponent(jButton2))
+                                    .addComponent(btnClientesElminar))
                                 .addGap(19, 19, 19))
                             .addGroup(tabClientesLayout.createSequentialGroup()
                                 .addComponent(lblClientesId, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -982,8 +993,27 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnClientesAceptarActionPerformed
 
     private void btnClintesModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClintesModificarActionPerformed
-        // TODO add your handling code here:
+        if(idCliente != 0){
+            ModificaCliente modcli = new ModificaCliente(this, true,idCliente);
+            modcli.setLocationRelativeTo(this);
+            modcli.addWindowListener(new WindowAdapter() {
+                public void windowClosed(WindowEvent e) {
+                    Cliente modificado;
+                    DefaultTableModel dtm = (DefaultTableModel)tblClientestodos.getModel();
+                    modificado = modcli.getModificado();
+                    dtm.removeRow(filaSeleccionada);
+                    dtm.addRow(new Object[] {modificado.getIdCliente(), modificado.getCodigo(), modificado.getNombre()+", "+modificado.getApellido(),modificado.getDireccion()});
+                }
+            });
+            modcli.show();
+        }else {
+            JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnClintesModificarActionPerformed
+
+    private void btnClientesElminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClientesElminarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnClientesElminarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1025,11 +1055,11 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTabbedPane TabContent;
     private java.awt.Button btnArticulosAceptar;
     private java.awt.Button btnClientesAceptar;
+    private javax.swing.JButton btnClientesElminar;
     private javax.swing.JButton btnClintesModificar;
     private java.awt.Button btnProveedoresAceptar;
     private java.awt.Button btnUsuariosAceptar;
     private javax.swing.JCheckBox chkUsuariosAdmin;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

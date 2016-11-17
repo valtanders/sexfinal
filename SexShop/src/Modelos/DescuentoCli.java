@@ -78,4 +78,8 @@ public class DescuentoCli {
     public void setImporte(float importe) {
         this.importe = importe;
     }
+    
+    public String toString(){
+        return this.getDescripcion();
+    }
 }

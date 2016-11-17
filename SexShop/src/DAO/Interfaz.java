@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package DAO;
+import Modelos.Cliente;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -14,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public interface Interfaz <T> {
     public int agregar(T valor)throws SQLException;
-    public void modificar(T valor)throws SQLException;
+    public Cliente modificar(T valor)throws SQLException;
     public void eliminar(T valor)throws SQLException;
     public ConcurrentHashMap traerTodos()throws SQLException;
 
