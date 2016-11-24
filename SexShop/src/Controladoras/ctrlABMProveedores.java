@@ -3,20 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package DAO;
-import Modelos.Cliente;
+package Controladoras;
+
+import DAO.BDProveedores;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
-
 
 /**
  *
  * @author Valtanders
  */
-public interface Interfaz <T> {
-    public int agregar(T valor)throws SQLException;
-    public Object modificar(T valor)throws SQLException;
-    public void eliminar(int id)throws SQLException;
-    public ConcurrentHashMap traerTodos()throws SQLException;
-
+public class ctrlABMProveedores {
+    
+    BDProveedores bdproveedores = BDProveedores.getIntance();
+    
+    public ConcurrentHashMap traerTodos () throws SQLException {
+        return bdproveedores.traerTodos();
+    }
 }

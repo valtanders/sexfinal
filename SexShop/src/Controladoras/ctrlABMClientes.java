@@ -29,6 +29,10 @@ public class ctrlABMClientes {
         return bdclientes.modificar(new Cliente(id,descli,notas,nom,ape,dire,email,telefono,dni, fechanac,cod,est));
     }
     
+    public void EliminarCliente(int id) throws SQLException {
+        bdclientes.eliminar(id);
+    }
+    
     public ConcurrentHashMap TraerTodos() throws SQLException {        
         return bdclientes.traerTodos();
     }
@@ -47,6 +51,10 @@ public class ctrlABMClientes {
     
     public ConcurrentHashMap traerDescuentos() throws SQLException{
         return bdclientes.traerDescuentos();
+    }
+    
+    public Estado traeEstado (int id) throws SQLException{
+        return bdclientes.TraeEstado(id);
     }
 
 

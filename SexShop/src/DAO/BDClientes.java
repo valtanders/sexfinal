@@ -90,8 +90,20 @@ public class BDClientes implements Interfaz{
     }
 
     @Override
-    public void eliminar(Object valor) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void eliminar(int id) throws SQLException {
+        Conexion oCon = new Conexion();
+        oCon.getConexion();
+        String eliminar = "update cliente set fk_idestados = 3 where idcliente = ?";
+        try {
+            PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(eliminar);
+            sentencia.setInt(1, id);
+            sentencia.execute();
+            sentencia.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            oCon.close();
+        }
     }
 
     @Override
@@ -100,7 +112,7 @@ public class BDClientes implements Interfaz{
         ResultSet rs = null;
         ConcurrentHashMap resp = new ConcurrentHashMap<String, String>();
         oCon.getConexion();
-        String insert = "SELECT C.idcliente,C.notas,C.nombre,C.apellido,C.direccion,C.mail,C.telefono,C.dni,C.fechanac,C.codigoCliente, DC.idDescuentoCli, DC.descripcion, DC.porcentaje, DC.importe,E.idEstados,E.Descripcion  FROM cliente C INNER JOIN descuentocli DC ON idDescuentoCli = C.fk_idDescuentoCli INNER JOIN estados E on idEstados = C.fk_idEstados";
+        String insert = "SELECT C.idcliente,C.notas,C.nombre,C.apellido,C.direccion,C.mail,C.telefono,C.dni,C.fechanac,C.codigoCliente, DC.idDescuentoCli, DC.descripcion, DC.porcentaje, DC.importe,E.idEstados,E.Descripcion  FROM cliente C INNER JOIN descuentocli DC ON idDescuentoCli = C.fk_idDescuentoCli INNER JOIN estados E on idEstados = C.fk_idEstados where C.fk_idEstados <> 3";
         try {
             PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert);
             rs = sentencia.executeQuery();
@@ -219,6 +231,27 @@ public class BDClientes implements Interfaz{
         } finally {
             oCon.close();
             return lista;
+        }
+    }
+    
+    public Estado TraeEstado(int id) throws SQLException {
+        Conexion oCon = new Conexion();
+        ResultSet rs = null;
+        Estado estado = null;
+        oCon.getConexion();
+        String select = "Select * from estados where idestados = ?";
+        try{
+            PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(select);
+            sentencia.setInt(1, id);
+            rs = sentencia.executeQuery();
+            while (rs.next()) {
+                estado = new Estado(rs.getInt(1),rs.getString(2));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            oCon.close();
+            return estado;
         }
     }
 }

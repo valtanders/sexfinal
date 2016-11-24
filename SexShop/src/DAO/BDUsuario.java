@@ -60,7 +60,7 @@ public class BDUsuario implements Interfaz {
     }
 
     @Override
-    public void eliminar(Object valor) throws SQLException {
+    public void eliminar(int id) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
