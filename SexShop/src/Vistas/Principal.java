@@ -1432,8 +1432,8 @@ public class Principal extends javax.swing.JFrame {
             columnaABuscar = 2;
         
         trsFiltro = new TableRowSorter(tblArticulosTodos.getModel());
-        trsFiltro.setRowFilter(RowFilter.regexFilter(txtClientesBuscar.getText(), columnaABuscar));
-        tblClientestodos.setRowSorter(trsFiltro);
+        trsFiltro.setRowFilter(RowFilter.regexFilter(txtArticulosBuscar.getText(), columnaABuscar));
+        tblArticulosTodos.setRowSorter(trsFiltro);
     }//GEN-LAST:event_btnArticulosBuscarActionPerformed
 
     /**
