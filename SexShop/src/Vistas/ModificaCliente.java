@@ -284,14 +284,19 @@ public class ModificaCliente extends javax.swing.JDialog {
 
     private void btnModClienteModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModClienteModificarActionPerformed
         int estado;
+        String desc;
         java.util.Date utilDate = (java.util.Date)jdcModClienteFecha.getDate();
         java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-        if(rbModClienteActivo.isSelected())
-            estado = 1;
-        else
+        if(rbModClienteActivo.isSelected()){
+           estado = 1;
+           desc = "activo";
+        } 
+        else{
             estado = 2;
+            desc = "inactivo";
+        }
         try {
-            this.setModificado(ctrlclientes.ModificarCliente(idcliente,(DescuentoCli)lista.get(cbxModClienteDescuento.getSelectedIndex()+1),txtModClienteNotas.getText(),txtModClienteNombre.getText(),txtModClienteApellido.getText(),txtModClienteDieccion.getText(),txtModClienteEmail.getText(),txtModClienteTelefono.getText(),Integer.valueOf(txtModClienteDNI.getText()),sqlDate, modificado.getCodigo(),new Estado(estado)));
+            this.setModificado(ctrlclientes.ModificarCliente(idcliente,(DescuentoCli)lista.get(cbxModClienteDescuento.getSelectedIndex()+1),txtModClienteNotas.getText(),txtModClienteNombre.getText(),txtModClienteApellido.getText(),txtModClienteDieccion.getText(),txtModClienteEmail.getText(),txtModClienteTelefono.getText(),Integer.valueOf(txtModClienteDNI.getText()),sqlDate, modificado.getCodigo(),new Estado(estado,desc)));
             this.dispose();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);

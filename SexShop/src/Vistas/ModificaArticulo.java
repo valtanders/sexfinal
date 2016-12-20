@@ -224,12 +224,17 @@ public class ModificaArticulo extends javax.swing.JDialog {
 
     private void btnModAriculosModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModAriculosModificarActionPerformed
         int estado;
-        if(rbModArticuloActivo.isSelected())
+        String desc;
+        if(rbModArticuloActivo.isSelected()) {
             estado = 1;
-        else
+            desc = "activo";
+        }
+        else {
             estado = 2;
+            desc = "inactivo";
+        }
         try {
-            this.setModificado(ctrlarticulos.modificarArticulo(modificado.getId(),modificado.getCodigo(),txtModArticulosDescripcion.getText(), (float)spinModArticulosCosto.getValue(), (float)spinModArticulosPrecio.getValue(), ((Proveedor)cbxModArticulosProveedores.getSelectedItem()).getId(), ((Categoria)cbxModArticulosCategorias.getSelectedItem()).getId(), estado));
+            this.setModificado(ctrlarticulos.modificarArticulo(modificado.getId(),modificado.getCodigo(),txtModArticulosDescripcion.getText(), (float)spinModArticulosCosto.getValue(), (float)spinModArticulosPrecio.getValue(), ((Proveedor)cbxModArticulosProveedores.getSelectedItem()).getId(), ((Categoria)cbxModArticulosCategorias.getSelectedItem()).getId(), estado, desc));
             this.dispose();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);

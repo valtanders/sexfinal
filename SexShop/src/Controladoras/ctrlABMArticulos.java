@@ -28,8 +28,8 @@ public class ctrlABMArticulos {
         return bdarticulos.agregar(new Articulo(descripcion, costo, precio, sqlDate , new Proveedor(idproveedor), new Categoria(idcategoria), codigo, new Estado(1)));
     }
     
-    public Articulo modificarArticulo(int id,String codigo, String descripcion, float costo, float precio, int idproveedor, int idcategoria, int estado) throws SQLException{
-        return bdarticulos.modificar(new Articulo(id,descripcion, costo, precio , new Proveedor(idproveedor), new Categoria(idcategoria), codigo,new Estado(estado)));
+    public Articulo modificarArticulo(int id,String codigo, String descripcion, float costo, float precio, int idproveedor, int idcategoria, int estado, String desc) throws SQLException{
+        return bdarticulos.modificar(new Articulo(id,descripcion, costo, precio , new Proveedor(idproveedor), new Categoria(idcategoria), codigo,new Estado(estado,desc)));
     }
     
     public void eliminarArticulo(int id) throws SQLException{
