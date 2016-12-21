@@ -1,0 +1,4 @@
+Ventas
+Alquileres
+Caja
+Reportes

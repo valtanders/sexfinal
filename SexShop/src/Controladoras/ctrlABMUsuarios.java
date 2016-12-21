@@ -8,6 +8,7 @@ package Controladoras;
 import DAO.BDUsuario;
 import Modelos.Usuario;
 import java.sql.SQLException;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -23,5 +24,9 @@ public class ctrlABMUsuarios {
     
     public Usuario traerogueado(String nombre, String pass) throws SQLException {
         return bdusuario.traerLogueado(nombre, pass);
+    }
+    
+    public ConcurrentHashMap traerTodo() throws SQLException {
+        return bdusuario.traerTodos();
     }
 }

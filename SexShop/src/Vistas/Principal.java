@@ -50,6 +50,7 @@ public class Principal extends javax.swing.JFrame {
     private ConcurrentHashMap listaArticulos;
     private ConcurrentHashMap listaProveedores;
     private ConcurrentHashMap listaCategorias;
+    private ConcurrentHashMap listaUsuarios;
     private ctrlABMClientes ctrlclientes = new ctrlABMClientes();
     private ctrlABMUsuarios ctrlusuarios = new ctrlABMUsuarios();
     private ctrlABMArticulos ctrlarticulos = new ctrlABMArticulos();
@@ -188,6 +189,25 @@ public class Principal extends javax.swing.JFrame {
                     }
                 });
             }
+            try {
+                listaUsuarios = ctrlusuarios.traerTodo();
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+            }
+            if (listaUsuarios != null) {
+                DefaultTableModel dtmuser = new DefaultTableModel(new Object[] { "Codigo", "Nombre","Rol"}, 0) {public boolean isCellEditable(int rowIndex,int columnIndex){return false;}};
+                String Rol;
+                for (Iterator it = listaUsuarios.entrySet().iterator(); it.hasNext();) {
+                    ConcurrentHashMap.Entry<?,?> entry = (ConcurrentHashMap.Entry<?,?>) it.next();
+                    if (((Usuario)entry.getValue()).getRol() == 1)
+                        Rol = "Administrador";
+                    else
+                        Rol = "Operador";
+                    dtmuser.addRow(new Object[] {entry.getKey(), ((Usuario)entry.getValue()).getNombre(), Rol});
+                    
+                }
+                tblUsuariosTodos.setModel(dtmuser);
+            }
         } else {
             TabContent.setEnabledAt(TabContent.indexOfTab("USUARIOS"), false);
             TabContent.setEnabledAt(TabContent.indexOfTab("PROVEEDORES"), false);
@@ -278,7 +298,7 @@ public class Principal extends javax.swing.JFrame {
         txtUsuariosContraseña = new javax.swing.JPasswordField();
         txtUsuariosRepContraseña = new javax.swing.JPasswordField();
         jScrollPane7 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblUsuariosTodos = new javax.swing.JTable();
         tabArticulos = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -465,7 +485,7 @@ public class Principal extends javax.swing.JFrame {
                                             .addComponent(jdcClientesFechaNac, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
                                             .addComponent(txtClientesCodigo, javax.swing.GroupLayout.Alignment.TRAILING)))
                                     .addGroup(jPanel5Layout.createSequentialGroup()
-                                        .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)
                                         .addGap(75, 75, 75)
                                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                             .addComponent(txtClientesEmail)
@@ -679,7 +699,7 @@ public class Principal extends javax.swing.JFrame {
             .addGroup(tabClientesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
                     .addGroup(tabClientesLayout.createSequentialGroup()
                         .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(tabClientesLayout.createSequentialGroup()
@@ -832,7 +852,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblUsuariosTodos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -843,7 +863,7 @@ public class Principal extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane7.setViewportView(jTable1);
+        jScrollPane7.setViewportView(tblUsuariosTodos);
 
         javax.swing.GroupLayout tabUsuariosLayout = new javax.swing.GroupLayout(tabUsuarios);
         tabUsuarios.setLayout(tabUsuariosLayout);
@@ -861,7 +881,7 @@ public class Principal extends javax.swing.JFrame {
             .addGroup(tabUsuariosLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(tabUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
                     .addGroup(tabUsuariosLayout.createSequentialGroup()
                         .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -945,7 +965,7 @@ public class Principal extends javax.swing.JFrame {
                             .addComponent(spinArticulosCosto, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(SpinArticulosPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1163,7 +1183,7 @@ public class Principal extends javax.swing.JFrame {
                         .addGroup(tabArticulosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnArticulosModificar)
                             .addComponent(btnArticulosElminar)))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1208,7 +1228,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
+                        .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(300, 300, 300))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1228,7 +1248,7 @@ public class Principal extends javax.swing.JFrame {
                                         .addGap(8, 8, 8)
                                         .addComponent(btnProveedoresAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addContainerGap(41, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel21)
                         .addGap(0, 0, Short.MAX_VALUE))))
@@ -1291,7 +1311,7 @@ public class Principal extends javax.swing.JFrame {
             .addGroup(tabProveedoresLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(tabProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
                     .addComponent(jScrollPane5))
                 .addContainerGap())
         );
@@ -1704,7 +1724,6 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
-    private javax.swing.JTable jTable1;
     private com.toedter.calendar.JDateChooser jdcClientesFechaNac;
     private java.awt.Label labelContraseña;
     private java.awt.Label labelContraseñaR;
@@ -1742,6 +1761,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTable tblArticulosTodos;
     private javax.swing.JTable tblClientestodos;
     private javax.swing.JTable tblProveedoresTodos;
+    private javax.swing.JTable tblUsuariosTodos;
     private javax.swing.JTextField txtArticulosBuscar;
     private javax.swing.JTextField txtArticulosCodigo;
     private javax.swing.JTextArea txtArticulosDescripcion;
