@@ -19,12 +19,11 @@ public class Articulo {
     private Date fechaCompra;
     private Proveedor proveedor;
     private Categoria categoria;
-    private String codigo;
     private Estado estado;
     
     public Articulo () {}
     
-    public Articulo (int id, String descripcion, float costo, float precio, Date fechacompra, Proveedor proveedor, Categoria categoria, String codigo, Estado estado) {
+    public Articulo (int id, String descripcion, float costo, float precio, Date fechacompra, Proveedor proveedor, Categoria categoria, Estado estado) {
         this.id = id;
         this.descripcion = descripcion;
         this.costo = costo;
@@ -32,29 +31,26 @@ public class Articulo {
         this.fechaCompra = fechacompra;
         this.proveedor = proveedor;
         this.categoria = categoria;
-        this.codigo = codigo;
         this.estado = estado;
     }
     
-    public Articulo (String descripcion, float costo, float precio, Date fechacompra, Proveedor proveedor, Categoria categoria, String codigo, Estado estado) {
+    public Articulo (String descripcion, float costo, float precio, Date fechacompra, Proveedor proveedor, Categoria categoria, Estado estado) {
         this.descripcion = descripcion;
         this.costo = costo;
         this.precio = precio;
         this.fechaCompra = fechacompra;
         this.proveedor = proveedor;
         this.categoria = categoria;
-        this.codigo = codigo;
         this.estado = estado;
     }
     
-    public Articulo (int id,String descripcion, float costo, float precio, Proveedor proveedor, Categoria categoria, String codigo, Estado estado) {
+    public Articulo (int id,String descripcion, float costo, float precio, Proveedor proveedor, Categoria categoria, Estado estado) {
         this.id = id;
         this.descripcion = descripcion;
         this.costo = costo;
         this.precio = precio;
         this.proveedor = proveedor;
         this.categoria = categoria;
-        this.codigo = codigo;
         this.estado = estado;
     }
 
@@ -176,14 +172,4 @@ public class Articulo {
     /**
      * @return the codigo
      */
-    public String getCodigo() {
-        return codigo;
-    }
-
-    /**
-     * @param codigo the codigo to set
-     */
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
 }

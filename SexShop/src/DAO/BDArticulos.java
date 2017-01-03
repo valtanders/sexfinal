@@ -36,8 +36,8 @@ public class BDArticulos implements Interfaz {
         Conexion oCon = new Conexion();
         oCon.getConexion();
         int llave = 0;
-        String insert = "insert into articulos (descripccion, costo, precio, fechaCompra, fk_idProveedores, fk_idCategorias, codigo, fk_idEstados)\n" +
-        "values (?,?,?,?,?,?,?,?)";
+        String insert = "insert into articulos (descripccion, costo, precio, fechaCompra, fk_idProveedores, fk_idCategorias, fk_idEstados)\n" +
+        "values (?,?,?,?,?,?,?)";
         try {
             PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert, PreparedStatement.RETURN_GENERATED_KEYS);
             sentencia.setString(1, articulo.getDescripcion());
@@ -46,8 +46,7 @@ public class BDArticulos implements Interfaz {
             sentencia.setDate(4, articulo.getFechaCompra());
             sentencia.setInt(5, articulo.getProveedor().getId());
             sentencia.setInt(6, articulo.getCategoria().getId());
-            sentencia.setString(7, articulo.getCodigo());
-            sentencia.setInt(8, articulo.getEstado().getId());
+            sentencia.setInt(7, articulo.getEstado().getId());
             sentencia.execute();
             ResultSet rs = sentencia.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -112,7 +111,7 @@ public class BDArticulos implements Interfaz {
         ResultSet rs = null;
         ConcurrentHashMap resp = new ConcurrentHashMap<String, String>();
         oCon.getConexion();
-        String insert = "select A.idArticulos, A.descripccion, A.costo, A.precio, A.fechaCompra, A.fk_idProveedores, A.fk_idCategorias, A.codigo, A.fk_idEstados, P.razonsocial, P.direccion, P.telefono, P.mail, P.codigoProveedor, P.fk_idEstados, C.descripcion, E.Descripcion from articulos A\n" +
+        String insert = "select A.idArticulos, A.descripccion, A.costo, A.precio, A.fechaCompra, A.fk_idProveedores, A.fk_idCategorias, A.fk_idEstados, P.razonsocial, P.direccion, P.telefono, P.mail, P.codigoProveedor, P.fk_idEstados, C.descripcion, E.Descripcion from articulos A\n" +
             "inner join proveedores P on P.idproveedores = A.fk_idproveedores\n" +
             "inner join categorias C on C.idcategorias = A.fk_idcategorias\n" +
             "inner join Estados E on E.idestados = A.fk_idestados\n" +
@@ -127,10 +126,10 @@ public class BDArticulos implements Interfaz {
             Categoria categoria;
             Estado est;
             while (rs.next()) {
-                est = new Estado(rs.getInt(8),rs.getString(17));
-                categoria = new Categoria(rs.getInt(7),rs.getString(16));
-                proveedor = new Proveedor(rs.getInt(6), rs.getString(10),rs.getString(11), rs.getString(12),rs.getString(13),rs.getString(14),new Estado());
-                articulo = new Articulo(rs.getInt(1), rs.getString(2), rs.getFloat(3), rs.getFloat(4), rs.getDate(5), proveedor, categoria, rs.getString(8),est);
+                est = new Estado(rs.getInt(8),rs.getString(16));
+                categoria = new Categoria(rs.getInt(7),rs.getString(15));
+                proveedor = new Proveedor(rs.getInt(6), rs.getString(9),rs.getString(10), rs.getString(11),rs.getString(12),rs.getString(13),new Estado());
+                articulo = new Articulo(rs.getInt(1), rs.getString(2), rs.getFloat(3), rs.getFloat(4), rs.getDate(5), proveedor, categoria,est);
                 resp.put(articulo.getId(), articulo);
             }
             rs.close();
@@ -175,7 +174,7 @@ public class BDArticulos implements Interfaz {
         Proveedor prov = null;
         Categoria cat = null;
         oCon.getConexion();
-        String select = "select A.idArticulos, A.descripccion, A.costo, A.precio, A.fechaCompra, A.fk_idProveedores, A.fk_idCategorias, A.codigo, A.fk_idEstados, P.razonsocial, P.direccion, P.telefono, P.mail, P.codigoProveedor, P.fk_idEstados, C.descripcion, E.Descripcion from articulos A\n" +
+        String select = "select A.idArticulos, A.descripccion, A.costo, A.precio, A.fechaCompra, A.fk_idProveedores, A.fk_idCategorias, A.fk_idEstados, P.razonsocial, P.direccion, P.telefono, P.mail, P.codigoProveedor, P.fk_idEstados, C.descripcion, E.Descripcion from articulos A\n" +
             "inner join proveedores P on P.idproveedores = A.fk_idproveedores\n" +
             "inner join categorias C on C.idcategorias = A.fk_idcategorias\n" +
             "inner join Estados E on E.idestados = A.fk_idestados\n" +
@@ -185,10 +184,10 @@ public class BDArticulos implements Interfaz {
             sentencia.setInt(1, id);
             rs = sentencia.executeQuery();
             while(rs.next()){
-                est = new Estado(rs.getInt(9),rs.getString(17));
-                cat = new Categoria(rs.getInt(7),rs.getString(16));
-                prov = new Proveedor(rs.getInt(6), rs.getString(10),rs.getString(11), rs.getString(12),rs.getString(13),rs.getString(14),new Estado());
-                arti = new Articulo(rs.getInt(1), rs.getString(2), rs.getFloat(3), rs.getFloat(4), rs.getDate(5), prov, cat, rs.getString(8),est);
+                est = new Estado(rs.getInt(8),rs.getString(16));
+                cat = new Categoria(rs.getInt(7),rs.getString(15));
+                prov = new Proveedor(rs.getInt(6), rs.getString(9),rs.getString(10), rs.getString(11),rs.getString(12),rs.getString(13),new Estado());
+                arti = new Articulo(rs.getInt(1), rs.getString(2), rs.getFloat(3), rs.getFloat(4), rs.getDate(5), prov, cat,est);
             }
             rs.close();
             sentencia.close();
