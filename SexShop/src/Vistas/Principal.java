@@ -50,6 +50,7 @@ public class Principal extends javax.swing.JFrame {
     private ConcurrentHashMap listaArticulos;
     private ConcurrentHashMap listaProveedores;
     private ConcurrentHashMap listaCategorias;
+    private ConcurrentHashMap listaUsuarios;
     private ctrlABMClientes ctrlclientes = new ctrlABMClientes();
     private ctrlABMUsuarios ctrlusuarios = new ctrlABMUsuarios();
     private ctrlABMArticulos ctrlarticulos = new ctrlABMArticulos();
@@ -180,6 +181,25 @@ public class Principal extends javax.swing.JFrame {
                         }
                     }
                 });
+            }
+            try {
+                listaUsuarios = ctrlusuarios.traerTodo();
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+            }
+            if (listaUsuarios != null) {
+                DefaultTableModel dtmuser = new DefaultTableModel(new Object[] { "Codigo", "Nombre","Rol"}, 0) {public boolean isCellEditable(int rowIndex,int columnIndex){return false;}};
+                String Rol;
+                for (Iterator it = listaUsuarios.entrySet().iterator(); it.hasNext();) {
+                    ConcurrentHashMap.Entry<?,?> entry = (ConcurrentHashMap.Entry<?,?>) it.next();
+                    if (((Usuario)entry.getValue()).getRol() == 1)
+                        Rol = "Administrador";
+                    else
+                        Rol = "Operador";
+                    dtmuser.addRow(new Object[] {entry.getKey(), ((Usuario)entry.getValue()).getNombre(), Rol});
+                    
+                }
+                tblUsuariosTodos.setModel(dtmuser);
             }
         } else {
             TabContent.setEnabledAt(TabContent.indexOfTab("USUARIOS"), false);
@@ -342,6 +362,7 @@ public class Principal extends javax.swing.JFrame {
         txtUsuariosRepContraseña = new javax.swing.JPasswordField();
         jScrollPane7 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        tblUsuariosTodos = new javax.swing.JTable();
         tabArticulos = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -1112,6 +1133,7 @@ public class Principal extends javax.swing.JFrame {
                                             .addComponent(txtClientesCodigo, javax.swing.GroupLayout.Alignment.TRAILING)))
                                     .addGroup(jPanel5Layout.createSequentialGroup()
                                         .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)
                                         .addGap(75, 75, 75)
                                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                             .addComponent(txtClientesEmail)
@@ -1326,6 +1348,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
                     .addGroup(tabClientesLayout.createSequentialGroup()
                         .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(tabClientesLayout.createSequentialGroup()
@@ -1479,6 +1502,7 @@ public class Principal extends javax.swing.JFrame {
         );
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblUsuariosTodos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -1490,6 +1514,7 @@ public class Principal extends javax.swing.JFrame {
             }
         ));
         jScrollPane7.setViewportView(jTable1);
+        jScrollPane7.setViewportView(tblUsuariosTodos);
 
         javax.swing.GroupLayout tabUsuariosLayout = new javax.swing.GroupLayout(tabUsuarios);
         tabUsuarios.setLayout(tabUsuariosLayout);
