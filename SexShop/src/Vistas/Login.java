@@ -1,14 +1,16 @@
 package Vistas;
 
 import Controladoras.ctrlABMUsuarios;
-import DAO.Conexion;
 import Modelos.Usuario;
 import java.awt.Color;
 import javax.swing.JOptionPane;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyAdapter;
 
 public class Login extends javax.swing.JFrame {
-    
+
     private ctrlABMUsuarios ctrlusuarios = new ctrlABMUsuarios();
+
     public Login() {
         this.getContentPane().setBackground(Color.white);
         initComponents();
@@ -42,6 +44,18 @@ public class Login extends javax.swing.JFrame {
         btn_log.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_logActionPerformed(evt);
+            }
+        });
+
+        txtUser.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtUserKeyTyped(evt);
+            }
+        });
+
+        txtPass.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtPassKeyTyped(evt);
             }
         });
 
@@ -104,35 +118,51 @@ public class Login extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_logActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_logActionPerformed
-        
-        try {                                        
-            if( !"".equals(txtUser.getText()) && txtPass.getText() != ""){
+
+        try {
+            if (!"".equals(txtUser.getText()) && txtPass.getText() != "") {
                 Usuario userLogueado = ctrlusuarios.traerogueado(txtUser.getText(), txtPass.getText());
                 //ver tipo de ROL
-               if(userLogueado != null && userLogueado.getNombre().equals(txtUser.getText()) && userLogueado.getPassword().equals(txtPass.getText())){
-                   Principal principal = new Principal(userLogueado);
-                   principal.show();
-                   this.dispose();
-               }
-               else{
-                   JOptionPane.showMessageDialog(null, "Usuario/Password Incorrectos.", "Security", JOptionPane.ERROR_MESSAGE);
-               }
-            }
-            else{
+                if (userLogueado != null && userLogueado.getNombre().equals(txtUser.getText()) && userLogueado.getPassword().equals(txtPass.getText())) {
+                    Principal principal = new Principal(userLogueado);
+                    principal.show();
+                    this.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Usuario/Password Incorrectos.", "Security", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
                 JOptionPane.showMessageDialog(null, "Complete los Campos.", "Security", JOptionPane.ERROR_MESSAGE);
             }
-            
+
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }//GEN-LAST:event_btn_logActionPerformed
 
+    private void txtPassKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPassKeyTyped
+        presionarEnter(evt);
+    }//GEN-LAST:event_txtPassKeyTyped
+
+    private void txtUserKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtUserKeyTyped
+        presionarEnter(evt);
+    }//GEN-LAST:event_txtUserKeyTyped
+
+    private void presionarEnter(java.awt.event.KeyEvent evt) {
+        //Se asegura de capturar la tecla enter y descartar todas las demas
+        char cTeclaPresionada = evt.getKeyChar();
+
+        //Da click al boton elegido
+        if (cTeclaPresionada == KeyEvent.VK_ENTER) {
+            btn_log.doClick();
+        }
+    }
+    
     public static void main(String args[]) {
-        
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Login().setVisible(true);
-                
+
             }
         });
     }
@@ -147,6 +177,5 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JPasswordField txtPass;
     private javax.swing.JTextField txtUser;
     // End of variables declaration//GEN-END:variables
-
 
 }

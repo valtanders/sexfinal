@@ -66,7 +66,6 @@ public class BDUsuario implements Interfaz {
 
     @Override
     public ConcurrentHashMap traerTodos() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         Conexion oCon = new Conexion();
         ResultSet rs = null;
         ConcurrentHashMap resp = new ConcurrentHashMap<String, String>();
