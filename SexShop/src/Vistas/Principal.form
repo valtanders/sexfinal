@@ -424,6 +424,7 @@
                     <Component class="javax.swing.JTextField" name="txtVentasCodigoCli">
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtVentasCodigoCliActionPerformed"/>
+                        <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtVentasCodigoCliKeyTyped"/>
                       </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="btnVentasBuscarCli">
@@ -480,11 +481,17 @@
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="txtVentasCodArti">
+                      <Events>
+                        <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtVentasCodArtiKeyTyped"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="btnVentasBucarArti">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Buscar"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnVentasBucarArtiActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -585,6 +592,9 @@
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="txtVentasTotal">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel53">
                       <Properties>
@@ -644,22 +654,27 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jPanel18" alignment="0" max="32767" attributes="0"/>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jPanel15" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Component id="jPanel16" max="32767" attributes="0"/>
-                                      </Group>
-                                  </Group>
+                                  <Component id="jPanel15" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="jPanel16" max="32767" attributes="0"/>
                               </Group>
-                              <Component id="jPanel19" alignment="0" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="jPanel17" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="jPanel18" max="32767" attributes="0"/>
+                              </Group>
+                              <Component id="jPanel19" alignment="0" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -677,6 +692,7 @@
                           <Component id="jPanel18" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jPanel19" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -954,7 +970,7 @@
                               <Component id="txtAlquilerCodArti" min="-2" pref="102" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnAlquilerBucarArti" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="695" max="32767" attributes="0"/>
+                              <EmptySpace pref="687" max="32767" attributes="0"/>
                           </Group>
                           <Component id="jScrollPane9" alignment="0" max="32767" attributes="0"/>
                       </Group>
@@ -962,7 +978,7 @@
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
-                              <EmptySpace pref="46" max="32767" attributes="0"/>
+                              <EmptySpace pref="21" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jLabel78" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="txtAlquilerCodArti" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -987,6 +1003,9 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Buscar"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAlquilerBucarArtiActionPerformed"/>
+                      </Events>
                     </Component>
                     <Container class="javax.swing.JScrollPane" name="jScrollPane9">
                       <AuxValues>
@@ -1027,7 +1046,7 @@
                                   <Component id="txtAlquilerRecargos" alignment="0" pref="100" max="32767" attributes="0"/>
                                   <Component id="jLabel63" alignment="0" max="32767" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="494" max="32767" attributes="0"/>
+                              <EmptySpace pref="480" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="txtAlquilerTotal" alignment="0" max="32767" attributes="0"/>
                                   <Component id="jLabel64" alignment="0" min="-2" max="-2" attributes="0"/>

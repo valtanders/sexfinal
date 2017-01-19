@@ -29,6 +29,7 @@ public class BuscarArticulos extends javax.swing.JDialog {
     ConcurrentHashMap listaArticulos;
     private Articulo articulo;
     JDialog esto;
+    private int cantidad;
     
     public BuscarArticulos(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -38,6 +39,8 @@ public class BuscarArticulos extends javax.swing.JDialog {
     public BuscarArticulos(java.awt.Frame parent, boolean modal, ConcurrentHashMap listaarti) {
         super(parent, modal);
         initComponents();
+        cantidad = 1;
+        jspCantidad.setValue(1);
         this.listaArticulos = listaarti;
         esto = this;
         DefaultTableModel dtmarti = new DefaultTableModel(new Object[]{"Codigo", "Descripcion", "Precio"}, 0) {
@@ -58,6 +61,7 @@ public class BuscarArticulos extends javax.swing.JDialog {
                     int columna = tblArticulos.columnAtPoint(e.getPoint());
                     if ((fila > -1) && (columna > -1)) { 
                         articulo = (Articulo)listaArticulos.get(tblArticulos.getModel().getValueAt(fila, 0));
+                        cantidad = (Integer)jspCantidad.getValue();
                     }
                     esto.dispose();
                 }
@@ -80,6 +84,8 @@ public class BuscarArticulos extends javax.swing.JDialog {
         btnBuscar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblArticulos = new javax.swing.JTable();
+        jspCantidad = new javax.swing.JSpinner();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -112,6 +118,8 @@ public class BuscarArticulos extends javax.swing.JDialog {
         ));
         jScrollPane1.setViewportView(tblArticulos);
 
+        jLabel1.setText("Cantidad");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -121,13 +129,19 @@ public class BuscarArticulos extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtBuscaArti, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rbCodigo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rbDescripcion)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBuscar)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtBuscaArti, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(rbCodigo)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(rbDescripcion)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnBuscar))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jspCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -141,8 +155,12 @@ public class BuscarArticulos extends javax.swing.JDialog {
                     .addComponent(rbDescripcion)
                     .addComponent(btnBuscar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jspCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -208,7 +226,9 @@ public class BuscarArticulos extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSpinner jspCantidad;
     private javax.swing.JRadioButton rbCodigo;
     private javax.swing.JRadioButton rbDescripcion;
     private javax.swing.JTable tblArticulos;
@@ -220,5 +240,12 @@ public class BuscarArticulos extends javax.swing.JDialog {
      */
     public Articulo getArticulo() {
         return articulo;
+    }
+
+    /**
+     * @return the cantidad
+     */
+    public int getCantidad() {
+        return cantidad;
     }
 }

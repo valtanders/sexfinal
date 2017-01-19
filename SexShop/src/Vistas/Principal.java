@@ -17,6 +17,7 @@ import Modelos.Estado;
 import Modelos.Proveedor;
 import Modelos.Usuario;
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -33,6 +34,8 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -58,7 +61,11 @@ public class Principal extends javax.swing.JFrame {
     private int idArticulo;
     private int filaSeleccionadaCliente;
     private int filaSeleccionadaArticulo;
+    private float totalVentas;
+    private float totalAlquiler;
     private TableRowSorter trsFiltro;
+    private Cliente clienteVenta;
+    private Cliente clienteAlqui;
 
     public Principal() {
     }
@@ -83,6 +90,28 @@ public class Principal extends javax.swing.JFrame {
         txtAlquilerFecha.setText(fechaformat.format(ahora));
         idCliente = 0;
         idArticulo = 0;
+        totalVentas = 0;
+        totalAlquiler = 0;
+        DefaultTableModel dtventas = new DefaultTableModel(new Object[]{"Codigo", "Descripcion", "Precio", "Cantidad", "total"}, 0) {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return false;
+            }
+        };
+        dtventas.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent tme) {
+                if (tme.getType() == TableModelEvent.INSERT || tme.getType() == TableModelEvent.UPDATE || tme.getType() == TableModelEvent.DELETE) {
+                    txtVentasTotal.setText(String.valueOf(totalVentas));
+                }
+            }
+        });
+        DefaultTableModel dtalqui = new DefaultTableModel(new Object[]{"Codigo", "Descripcion", "Precio", "Cantidad"}, 0) {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return false;
+            }
+        };
+        tblVentasTablaVentas.setModel(dtventas);
+        tblAlquilerTablaAlqui.setModel(dtalqui);
         try {
             listaProveedores = ctrlproveedores.traerTodos();
         } catch (SQLException ex) {
@@ -590,6 +619,11 @@ public class Principal extends javax.swing.JFrame {
                 txtVentasCodigoCliActionPerformed(evt);
             }
         });
+        txtVentasCodigoCli.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtVentasCodigoCliKeyTyped(evt);
+            }
+        });
 
         btnVentasBuscarCli.setText("Buscar");
         btnVentasBuscarCli.addActionListener(new java.awt.event.ActionListener() {
@@ -645,7 +679,18 @@ public class Principal extends javax.swing.JFrame {
 
         jLabel65.setText("Codigo Articulo: ");
 
+        txtVentasCodArti.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtVentasCodArtiKeyTyped(evt);
+            }
+        });
+
         btnVentasBucarArti.setText("Buscar");
+        btnVentasBucarArti.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVentasBucarArtiActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
         jPanel12.setLayout(jPanel12Layout);
@@ -688,6 +733,8 @@ public class Principal extends javax.swing.JFrame {
 
         jLabel52.setText("Recargos");
         jLabel52.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        txtVentasTotal.setEditable(false);
 
         jLabel53.setText("TOTAL A COBRAR");
 
@@ -958,6 +1005,11 @@ public class Principal extends javax.swing.JFrame {
         jLabel78.setText("Codigo Articulo: ");
 
         btnAlquilerBucarArti.setText("Buscar");
+        btnAlquilerBucarArti.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAlquilerBucarArtiActionPerformed(evt);
+            }
+        });
 
         tblAlquilerTablaAlqui.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -983,13 +1035,13 @@ public class Principal extends javax.swing.JFrame {
                 .addComponent(txtAlquilerCodArti, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAlquilerBucarArti)
-                .addContainerGap(695, Short.MAX_VALUE))
+                .addContainerGap(687, Short.MAX_VALUE))
             .addComponent(jScrollPane9)
         );
         jPanel18Layout.setVerticalGroup(
             jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel18Layout.createSequentialGroup()
-                .addContainerGap(46, Short.MAX_VALUE)
+                .addContainerGap(21, Short.MAX_VALUE)
                 .addGroup(jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel78)
                     .addComponent(txtAlquilerCodArti, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1022,7 +1074,7 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtAlquilerRecargos, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
                     .addComponent(jLabel63, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 494, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 480, Short.MAX_VALUE)
                 .addGroup(jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtAlquilerTotal)
                     .addComponent(jLabel64))
@@ -1057,17 +1109,21 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel14Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel14Layout.createSequentialGroup()
-                                .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jPanel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                    .addComponent(jPanel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel14Layout.createSequentialGroup()
                         .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(jPanel14Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel14Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(14, 14, 14))
         );
         jPanel14Layout.setVerticalGroup(
             jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1081,7 +1137,8 @@ public class Principal extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(25, 25, 25))
         );
 
         javax.swing.GroupLayout tabAlquilerLayout = new javax.swing.GroupLayout(tabAlquiler);
@@ -2586,6 +2643,7 @@ public class Principal extends javax.swing.JFrame {
                 if (buscado != null) {
                     lblNombreClientellenar.setText(buscado.getApellido() + ", " + buscado.getNombre());
                     lblCodigoClientellenar.setText(String.valueOf(buscado.getIdCliente()));
+                    clienteAlqui = buscado;
                 }
             }
         });
@@ -2603,11 +2661,94 @@ public class Principal extends javax.swing.JFrame {
                 if (buscado != null) {
                     lblNombreClientellenaralq.setText(buscado.getApellido() + ", " + buscado.getNombre());
                     lblCodigoClientellenaralq.setText(String.valueOf(buscado.getIdCliente()));
+                    clienteVenta = buscado;
                 }
             }
         });
         buscacliente.show();
     }//GEN-LAST:event_btnVentasBuscarCli1ActionPerformed
+
+    private void btnAlquilerBucarArtiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlquilerBucarArtiActionPerformed
+        BuscarArticulos buscaArticulos = new BuscarArticulos(this, true, listaArticulos);
+        buscaArticulos.setLocationRelativeTo(this);
+        buscaArticulos.addWindowListener(new WindowAdapter() {
+            public void windowClosed(WindowEvent e) {
+                if (buscaArticulos.getArticulo() != null) {
+                    Articulo buscado = buscaArticulos.getArticulo();
+                    DefaultTableModel dtm = (DefaultTableModel) tblAlquilerTablaAlqui.getModel();
+                    dtm.addRow(new Object[]{buscado.getId(), buscado.getDescripcion().toUpperCase(), buscado.getPrecio(), buscaArticulos.getCantidad()});
+                }
+            }
+        });
+        buscaArticulos.show();
+    }//GEN-LAST:event_btnAlquilerBucarArtiActionPerformed
+
+    private void btnVentasBucarArtiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVentasBucarArtiActionPerformed
+        BuscarArticulos buscaArticulos = new BuscarArticulos(this, true, listaArticulos);
+        buscaArticulos.setLocationRelativeTo(this);
+        buscaArticulos.addWindowListener(new WindowAdapter() {
+            public void windowClosed(WindowEvent e) {
+                if (buscaArticulos.getArticulo() != null) {
+                    Articulo buscado = buscaArticulos.getArticulo();
+                    DefaultTableModel dtm = (DefaultTableModel) tblVentasTablaVentas.getModel();
+                    totalVentas += buscado.getPrecio() * buscaArticulos.getCantidad();
+                    dtm.addRow(new Object[]{buscado.getId(), buscado.getDescripcion().toUpperCase(), buscado.getPrecio(), buscaArticulos.getCantidad(), buscado.getPrecio() * buscaArticulos.getCantidad()});
+                }
+            }
+        });
+        buscaArticulos.show();
+    }//GEN-LAST:event_btnVentasBucarArtiActionPerformed
+
+    private void txtVentasCodigoCliKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtVentasCodigoCliKeyTyped
+        char cTeclaPresionada = evt.getKeyChar();
+        Cliente aux = clienteVenta;
+        clienteVenta = null;
+        if (cTeclaPresionada == KeyEvent.VK_ENTER || cTeclaPresionada == KeyEvent.VK_TAB) {
+            if (isNumeric(txtVentasCodigoCli.getText())) {
+                clienteVenta = (Cliente) listaClientes.get(Integer.parseInt(txtVentasCodigoCli.getText()));
+                if (clienteVenta != null) {
+                    lblCodigoCliente.setText("Codigo");
+                    lblNombreCliente.setText("Nombre");
+                    lblNombreClientellenar.setText(clienteVenta.getApellido() + ", " + clienteVenta.getNombre());
+                    lblCodigoClientellenar.setText(String.valueOf(clienteVenta.getIdCliente()));
+                    txtVentasCodigoCli.setText("");
+                } else {
+                    JOptionPane.showMessageDialog(null, "ingrese un codigo de cliente valido", "Clente no encontrado", JOptionPane.ERROR_MESSAGE);
+                    clienteVenta = aux;
+                    txtVentasCodigoCli.selectAll();
+                }
+            } else {
+                txtVentasCodigoCli.setText("");
+            }
+        }
+        /*else {
+            txtVentasCodigoCli.setText("");
+        }*/
+    }//GEN-LAST:event_txtVentasCodigoCliKeyTyped
+
+    private void txtVentasCodArtiKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtVentasCodArtiKeyTyped
+        char cTeclaPresionada = evt.getKeyChar();
+        if (cTeclaPresionada == KeyEvent.VK_ENTER || cTeclaPresionada == KeyEvent.VK_TAB) {
+            if (isNumeric(txtVentasCodArti.getText())) {
+                Articulo agregar = (Articulo) listaArticulos.get(Integer.parseInt(txtVentasCodArti.getText()));
+                if (agregar != null) {
+                    DefaultTableModel dtm = (DefaultTableModel) tblVentasTablaVentas.getModel();
+                    totalVentas += agregar.getPrecio();
+                    dtm.addRow(new Object[]{agregar.getId(), agregar.getDescripcion().toUpperCase(), agregar.getPrecio(), 1, agregar.getPrecio()});
+                    txtVentasCodArti.setText("");
+                } else {
+                    JOptionPane.showMessageDialog(null, "ingrese un codigo de articulo valido", "Articulo no encontrado", JOptionPane.ERROR_MESSAGE);
+                    txtVentasCodArti.selectAll();
+                }
+            } else {
+                txtVentasCodArti.setText("");
+            }
+        }
+    }//GEN-LAST:event_txtVentasCodArtiKeyTyped
+
+    public static boolean isNumeric(String str) {
+        return (str.matches("[+-]?\\d*(\\.\\d+)?") && str.equals("") == false);
+    }
 
     /**
      * @param args the command line arguments
@@ -2623,16 +2764,24 @@ public class Principal extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Principal.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Principal.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Principal.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Principal.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
