@@ -26,9 +26,7 @@ public class ModificaArticulo extends javax.swing.JDialog {
     
     private ctrlABMArticulos ctrlarticulos = new ctrlABMArticulos();
     private ctrlABMProveedores ctrlproveedores = new ctrlABMProveedores();
-    private ctrlABMCategorias ctrlcategorias = new ctrlABMCategorias();
     private ConcurrentHashMap listap = null;
-    private ConcurrentHashMap listac = null;
     private int idArticulo;
     private Articulo modificado;
 
@@ -49,7 +47,6 @@ public class ModificaArticulo extends javax.swing.JDialog {
         try {
             modificado = ctrlarticulos.traerPorId(idArticulo);
             listap = ctrlproveedores.traerTodos();
-            listac = ctrlcategorias.traerTodos();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
         }
@@ -57,16 +54,11 @@ public class ModificaArticulo extends javax.swing.JDialog {
                 ConcurrentHashMap.Entry<?, ?> entry = (ConcurrentHashMap.Entry<?, ?>) it.next();
                 cbxModArticulosProveedores.addItem(((Proveedor)entry.getValue()));
         }
-        for (Iterator it = listac.entrySet().iterator(); it.hasNext();) {
-                ConcurrentHashMap.Entry<?, ?> entry = (ConcurrentHashMap.Entry<?, ?>) it.next();
-                cbxModArticulosCategorias.addItem(((Categoria)entry.getValue()));
-        }
         if (modificado != null) {
             txtModArticulosDescripcion.setText(modificado.getDescripcion());
             spinModArticulosCosto.setValue(modificado.getCosto());
             spinModArticulosPrecio.setValue(modificado.getPrecio());
             cbxModArticulosProveedores.setSelectedItem(modificado.getProveedor());
-            cbxModArticulosCategorias.setSelectedItem(modificado.getCategoria());
             if(modificado.getEstado().getId() == 1)
                 rbModArticuloActivo.setSelected(true);
             else
@@ -88,7 +80,6 @@ public class ModificaArticulo extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         rbModArticuloActivo = new javax.swing.JRadioButton();
@@ -97,7 +88,6 @@ public class ModificaArticulo extends javax.swing.JDialog {
         spinModArticulosCosto = new javax.swing.JSpinner();
         spinModArticulosPrecio = new javax.swing.JSpinner();
         cbxModArticulosProveedores = new javax.swing.JComboBox<>();
-        cbxModArticulosCategorias = new javax.swing.JComboBox<>();
         btnModAriculosModificar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -109,8 +99,6 @@ public class ModificaArticulo extends javax.swing.JDialog {
         jLabel3.setText("Precio:");
 
         jLabel4.setText("Proveedor:");
-
-        jLabel5.setText("Categoria:");
 
         jLabel9.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jLabel9.setText("Estado:");
@@ -170,16 +158,13 @@ public class ModificaArticulo extends javax.swing.JDialog {
                                     .addComponent(jLabel1)
                                     .addComponent(jLabel2)
                                     .addComponent(jLabel3)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel5))
+                                    .addComponent(jLabel4))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(spinModArticulosPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtModArticulosDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(spinModArticulosCosto, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(cbxModArticulosCategorias, javax.swing.GroupLayout.Alignment.LEADING, 0, 208, Short.MAX_VALUE)
-                                        .addComponent(cbxModArticulosProveedores, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                                    .addComponent(cbxModArticulosProveedores, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(200, 200, 200)
                         .addComponent(btnModAriculosModificar)))
@@ -204,11 +189,7 @@ public class ModificaArticulo extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(cbxModArticulosProveedores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(cbxModArticulosCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(50, 50, 50)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(14, 14, 14)
@@ -234,7 +215,7 @@ public class ModificaArticulo extends javax.swing.JDialog {
             desc = "inactivo";
         }
         try {
-            this.setModificado(ctrlarticulos.modificarArticulo(modificado.getId(),txtModArticulosDescripcion.getText(), (float)spinModArticulosCosto.getValue(), (float)spinModArticulosPrecio.getValue(), ((Proveedor)cbxModArticulosProveedores.getSelectedItem()).getId(), ((Categoria)cbxModArticulosCategorias.getSelectedItem()).getId(), estado, desc));
+            this.setModificado(ctrlarticulos.modificarArticulo(modificado.getId(),txtModArticulosDescripcion.getText(), (float)spinModArticulosCosto.getValue(), (float)spinModArticulosPrecio.getValue(), ((Proveedor)cbxModArticulosProveedores.getSelectedItem()).getId(), estado, desc));
             this.dispose();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
@@ -287,13 +268,11 @@ public class ModificaArticulo extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup btnGrupoArticulos;
     private javax.swing.JButton btnModAriculosModificar;
-    private javax.swing.JComboBox<Modelos.Categoria> cbxModArticulosCategorias;
     private javax.swing.JComboBox<Modelos.Proveedor> cbxModArticulosProveedores;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JRadioButton rbModArticuloActivo;

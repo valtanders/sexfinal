@@ -10,7 +10,6 @@ import Modelos.Categoria;
 import Modelos.Estado;
 import Modelos.Proveedor;
 import com.mysql.jdbc.PreparedStatement;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;

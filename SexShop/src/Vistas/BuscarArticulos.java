@@ -36,7 +36,7 @@ public class BuscarArticulos extends javax.swing.JDialog {
         initComponents();
     }
     
-    public BuscarArticulos(java.awt.Frame parent, boolean modal, ConcurrentHashMap listaarti) {
+    public BuscarArticulos(java.awt.Frame parent, boolean modal, ConcurrentHashMap listaarti, String cat) {
         super(parent, modal);
         initComponents();
         cantidad = 1;
@@ -50,9 +50,15 @@ public class BuscarArticulos extends javax.swing.JDialog {
             };
             for (Iterator it = listaArticulos.entrySet().iterator(); it.hasNext();) {
                 ConcurrentHashMap.Entry<?, ?> entry = (ConcurrentHashMap.Entry<?, ?>) it.next();
-                if (((Articulo) entry.getValue()).getCategoria().getId() == 2) {
-                    dtmarti.addRow(new Object[]{entry.getKey(), ((Articulo) entry.getValue()).getDescripcion().toUpperCase(), ((Articulo) entry.getValue()).getPrecio()});
-                }
+                if (cat.equals("venta")){
+                    if (((Articulo) entry.getValue()).getCategoria().getId() == 2) {
+                        dtmarti.addRow(new Object[]{entry.getKey(), ((Articulo) entry.getValue()).getDescripcion().toUpperCase(), ((Articulo) entry.getValue()).getPrecio()});
+                    }
+                }else {
+                    if (((Articulo) entry.getValue()).getCategoria().getId() == 1) {
+                        dtmarti.addRow(new Object[]{entry.getKey(), ((Articulo) entry.getValue()).getDescripcion().toUpperCase(), ((Articulo) entry.getValue()).getPrecio()});
+                    }
+                } 
             }
             tblArticulos.setModel(dtmarti);
             tblArticulos.addMouseListener(new MouseAdapter() {
