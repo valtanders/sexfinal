@@ -7,6 +7,7 @@ package Controladoras;
 
 import DAO.BDCaja;
 import Modelos.Caja;
+import Modelos.DetCaja;
 import java.sql.SQLException;
 import java.util.Date;
 
@@ -22,8 +23,12 @@ public class ctrlCaja {
         return bdcaja.cajaAbierta();
     }
     
-    public void abrirCaja(Date ahora) throws SQLException {
-        bdcaja.abrirCaja(ahora);
+    public int abrirCaja(Date ahora) throws SQLException {
+        return bdcaja.abrirCaja(ahora);
+    }
+    
+    public void insertarDetalle(DetCaja detCaja) throws SQLException{
+        bdcaja.insertarDetalleCaja(detCaja);
     }
     
     public void cerrarCaja(Date ahora) throws SQLException {

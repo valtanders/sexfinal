@@ -6,6 +6,7 @@
 package DAO;
 
 import Modelos.Caja;
+import Modelos.DetCaja;
 import com.mysql.jdbc.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,6 +48,27 @@ public class BDCaja {
         }
     }
     
+    public void insertarDetalleCaja(DetCaja detCaja) throws SQLException{
+        Conexion oCon = new Conexion();
+        oCon.getConexion();
+        String insert = "insert into detallecaja(concepto, fk_idCabVenta, fk_idCaja,monto) values(?,?,?,?)";
+        try {
+            PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert);
+            sentencia.setString(1, detCaja.getConcepto());
+            if(detCaja.getDetalleOperacion() != null)
+                sentencia.setInt(2, detCaja.getDetalleOperacion().getId());
+            else
+                sentencia.setNull(2, java.sql.Types.INTEGER);
+            sentencia.setInt(3, detCaja.getCaja().getIdCaja());
+            sentencia.setFloat(4, detCaja.getMonto());
+            sentencia.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            oCon.close();
+        }
+    }
+    
     
     public void cerrarCaja(Date ahora) throws SQLException{
         Conexion oCon = new Conexion();
@@ -64,19 +86,25 @@ public class BDCaja {
         }
     }
 
-    public void abrirCaja(Date ahora) throws SQLException {
+    public int abrirCaja(Date ahora) throws SQLException {
         Conexion oCon = new Conexion();
         oCon.getConexion();
         java.sql.Date sqldate = new java.sql.Date(ahora.getTime());
+        int llave = 0;
         String insert = "insert into caja(fechaapertura, fechacierre, abierta) values(?,null,1)";
         try {
-            PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert);
+            PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert, PreparedStatement.RETURN_GENERATED_KEYS);
             sentencia.setDate(1, sqldate);
             sentencia.execute();
+            ResultSet rs = sentencia.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                llave = rs.getInt(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             oCon.close();
+            return llave;
         }
     }
 }

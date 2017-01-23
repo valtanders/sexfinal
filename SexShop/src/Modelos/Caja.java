@@ -19,6 +19,10 @@ public class Caja {
     
     public Caja () {}
     
+    public Caja (int id) {
+        this.idCaja = id;
+    }
+    
     public Caja (int id, Date fechaA, Date fechaC, boolean abierta) {
         this.idCaja = id;
         this.fechaAper = fechaA;
