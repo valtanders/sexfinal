@@ -27,6 +27,10 @@ public class ctrlCaja {
         return bdcaja.abrirCaja(ahora);
     }
     
+    public DetCaja traeUltimoDetalleAper() throws SQLException {
+        return bdcaja.traeUltimoDetalleAper();
+    }
+    
     public void insertarDetalle(DetCaja detCaja) throws SQLException{
         bdcaja.insertarDetalleCaja(detCaja);
     }

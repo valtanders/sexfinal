@@ -8,10 +8,10 @@ package Vistas;
 import Modelos.Articulo;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -25,17 +25,16 @@ public class BuscarArticulos extends javax.swing.JDialog {
     /**
      * Creates new form BuscarArticulos
      */
-    
     ConcurrentHashMap listaArticulos;
     private Articulo articulo;
     JDialog esto;
     private int cantidad;
-    
+
     public BuscarArticulos(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
-    
+
     public BuscarArticulos(java.awt.Frame parent, boolean modal, ConcurrentHashMap listaarti, String cat) {
         super(parent, modal);
         initComponents();
@@ -44,35 +43,43 @@ public class BuscarArticulos extends javax.swing.JDialog {
         this.listaArticulos = listaarti;
         esto = this;
         DefaultTableModel dtmarti = new DefaultTableModel(new Object[]{"Codigo", "Descripcion", "Precio"}, 0) {
-                public boolean isCellEditable(int rowIndex, int columnIndex) {
-                    return false;
-                }
-            };
-            for (Iterator it = listaArticulos.entrySet().iterator(); it.hasNext();) {
-                ConcurrentHashMap.Entry<?, ?> entry = (ConcurrentHashMap.Entry<?, ?>) it.next();
-                if (cat.equals("venta")){
-                    if (((Articulo) entry.getValue()).getCategoria().getId() == 2) {
-                        dtmarti.addRow(new Object[]{entry.getKey(), ((Articulo) entry.getValue()).getDescripcion().toUpperCase(), ((Articulo) entry.getValue()).getPrecio()});
-                    }
-                }else {
-                    if (((Articulo) entry.getValue()).getCategoria().getId() == 1) {
-                        dtmarti.addRow(new Object[]{entry.getKey(), ((Articulo) entry.getValue()).getDescripcion().toUpperCase(), ((Articulo) entry.getValue()).getPrecio()});
-                    }
-                } 
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return false;
             }
-            tblArticulos.setModel(dtmarti);
-            tblArticulos.addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    int fila = tblArticulos.rowAtPoint(e.getPoint());
-                    int columna = tblArticulos.columnAtPoint(e.getPoint());
-                    if ((fila > -1) && (columna > -1)) { 
-                        articulo = (Articulo)listaArticulos.get(tblArticulos.getModel().getValueAt(fila, 0));
-                        cantidad = (Integer)jspCantidad.getValue();
+        };
+        for (Iterator it = listaArticulos.entrySet().iterator(); it.hasNext();) {
+            ConcurrentHashMap.Entry<?, ?> entry = (ConcurrentHashMap.Entry<?, ?>) it.next();
+            if (cat.equals("venta")) {
+                dtmarti.addRow(new Object[]{entry.getKey(), ((Articulo) entry.getValue()).getDescripcion().toUpperCase(), ((Articulo) entry.getValue()).getPrecio()});
+            } else {
+                if (((Articulo) entry.getValue()).getCategoria().getId() == 1) {
+                    dtmarti.addRow(new Object[]{entry.getKey(), ((Articulo) entry.getValue()).getDescripcion().toUpperCase(), ((Articulo) entry.getValue()).getPrecio()});
+                }
+            }
+        }
+        tblArticulos.setModel(dtmarti);
+        tblArticulos.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                int fila = tblArticulos.rowAtPoint(e.getPoint());
+                int columna = tblArticulos.columnAtPoint(e.getPoint());
+                if ((fila > -1) && (columna > -1)) {
+                    articulo = (Articulo) listaArticulos.get(tblArticulos.getModel().getValueAt(fila, 0));
+                    cantidad = (Integer) jspCantidad.getValue();
+                }
+                if (articulo.getCantidad() < cantidad) {
+                    int resp = JOptionPane.showConfirmDialog(null, "Cantidad ingresada supera la existencia, ¿Continua?", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (resp == JOptionPane.YES_OPTION) {
+                        esto.dispose();
+                    } else {
+                        articulo = null;
+                        cantidad = 1;
                     }
+                } else {
                     esto.dispose();
                 }
-                    
-            });
+            }
+
+        });
     }
 
     /**
@@ -178,10 +185,11 @@ public class BuscarArticulos extends javax.swing.JDialog {
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         int columnaABuscar = 0;
-        if(rbCodigo.isSelected())
-        columnaABuscar = 0;
-        else
-        columnaABuscar = 1;
+        if (rbCodigo.isSelected()) {
+            columnaABuscar = 0;
+        } else {
+            columnaABuscar = 1;
+        }
 
         TableRowSorter trsFiltro = new TableRowSorter(tblArticulos.getModel());
         trsFiltro.setRowFilter(RowFilter.regexFilter(txtBuscaArti.getText().toUpperCase(), columnaABuscar));

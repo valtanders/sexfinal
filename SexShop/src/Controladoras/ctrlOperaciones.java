@@ -5,10 +5,19 @@
  */
 package Controladoras;
 
+import DAO.BDOperaciones;
+import Modelos.CabOperacion;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 /**
  *
  * @author Valtanders
  */
 public class ctrlOperaciones {
+    BDOperaciones bdoperaciones = BDOperaciones.getIntance();
     
+    public void cargaOperacion(CabOperacion cabOp, ArrayList detalle, int keyCaja) throws SQLException{
+        bdoperaciones.cargaOperacion(cabOp, detalle, keyCaja);
+    }
 }

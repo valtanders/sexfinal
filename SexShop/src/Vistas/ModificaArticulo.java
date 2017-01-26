@@ -6,10 +6,8 @@
 package Vistas;
 
 import Controladoras.ctrlABMArticulos;
-import Controladoras.ctrlABMCategorias;
 import Controladoras.ctrlABMProveedores;
 import Modelos.Articulo;
-import Modelos.Categoria;
 import Modelos.Proveedor;
 import java.sql.SQLException;
 import java.util.Iterator;
@@ -215,7 +213,7 @@ public class ModificaArticulo extends javax.swing.JDialog {
             desc = "inactivo";
         }
         try {
-            this.setModificado(ctrlarticulos.modificarArticulo(modificado.getId(),txtModArticulosDescripcion.getText(), (float)spinModArticulosCosto.getValue(), (float)spinModArticulosPrecio.getValue(), ((Proveedor)cbxModArticulosProveedores.getSelectedItem()).getId(), estado, desc));
+            this.setModificado(ctrlarticulos.modificarArticulo(modificado.getId(),txtModArticulosDescripcion.getText(), (float)spinModArticulosCosto.getValue(), (float)spinModArticulosPrecio.getValue(), modificado.getCantidad(), ((Proveedor)cbxModArticulosProveedores.getSelectedItem()).getId(), estado, desc));
             this.dispose();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);

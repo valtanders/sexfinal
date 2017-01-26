@@ -30,7 +30,6 @@ public class BDCaja {
     public Caja cajaAbierta() throws SQLException {
         Conexion oCon = new Conexion();
         ResultSet rs = null;
-        boolean abierta = false;
         Caja caja = null;
         oCon.getConexion();
         String select = "Select * from caja where abierta = true";
@@ -38,7 +37,7 @@ public class BDCaja {
             PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(select);
             rs = sentencia.executeQuery();
             while (rs.next()) {
-                caja = new Caja(rs.getInt(1),rs.getDate(2),null,rs.getBoolean(4));
+                caja = new Caja(rs.getInt(1), rs.getDate(2), null, rs.getBoolean(4));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -47,18 +46,19 @@ public class BDCaja {
             return caja;
         }
     }
-    
-    public void insertarDetalleCaja(DetCaja detCaja) throws SQLException{
+
+    public void insertarDetalleCaja(DetCaja detCaja) throws SQLException {
         Conexion oCon = new Conexion();
         oCon.getConexion();
         String insert = "insert into detallecaja(concepto, fk_idCabVenta, fk_idCaja,monto) values(?,?,?,?)";
         try {
             PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert);
             sentencia.setString(1, detCaja.getConcepto());
-            if(detCaja.getDetalleOperacion() != null)
+            if (detCaja.getDetalleOperacion() != null) {
                 sentencia.setInt(2, detCaja.getDetalleOperacion().getId());
-            else
-                sentencia.setNull(2, java.sql.Types.INTEGER);
+            } else {
+                sentencia.setNull(2, java.sql.Types.NULL);
+            }
             sentencia.setInt(3, detCaja.getCaja().getIdCaja());
             sentencia.setFloat(4, detCaja.getMonto());
             sentencia.execute();
@@ -68,9 +68,32 @@ public class BDCaja {
             oCon.close();
         }
     }
-    
-    
-    public void cerrarCaja(Date ahora) throws SQLException{
+
+    public DetCaja traeUltimoDetalleAper() throws SQLException {
+        Conexion oCon = new Conexion();
+        oCon.getConexion();
+        ResultSet rs = null;
+        DetCaja detCaja = null;
+        String select = "select * from detallecaja d \n"
+                + "join caja c on d.fk_idcaja = c.idcaja\n"
+                + "where c.abierta = true\n"
+                + "and concepto like '%Apertura%'";
+        try {
+            PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(select);
+            rs = sentencia.executeQuery();
+            while (rs.next()) {
+                detCaja = new DetCaja(rs.getByte(1), rs.getFloat(4), rs.getString(3), new Caja(rs.getInt(2)), null);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            oCon.close();
+            return detCaja;
+        }
+
+    }
+
+    public void cerrarCaja(Date ahora) throws SQLException {
         Conexion oCon = new Conexion();
         oCon.getConexion();
         java.sql.Date sqldate = new java.sql.Date(ahora.getTime());

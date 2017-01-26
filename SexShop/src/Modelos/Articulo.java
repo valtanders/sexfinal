@@ -16,6 +16,7 @@ public class Articulo {
     private String descripcion;
     private float costo;
     private float precio;
+    private int cantidad;
     private Date fechaCompra;
     private Proveedor proveedor;
     private Categoria categoria;
@@ -23,51 +24,56 @@ public class Articulo {
     
     public Articulo () {}
     
-    public Articulo (int id, String descripcion, float costo, float precio, Date fechacompra, Proveedor proveedor, Categoria categoria, Estado estado) {
+    public Articulo (int id, String descripcion, float costo, float precio, int cantidad, Date fechacompra, Proveedor proveedor, Categoria categoria, Estado estado) {
         this.id = id;
         this.descripcion = descripcion;
         this.costo = costo;
         this.precio = precio;
+        this.cantidad = cantidad;
         this.fechaCompra = fechacompra;
         this.proveedor = proveedor;
         this.categoria = categoria;
         this.estado = estado;
     }
     
-    public Articulo (int id, String descripcion, float costo, float precio, Proveedor proveedor, Estado estado) {
+    public Articulo (int id, String descripcion, float costo, float precio, int cantidad, Proveedor proveedor, Estado estado) {
         this.id = id;
         this.descripcion = descripcion;
         this.costo = costo;
         this.precio = precio;
+        this.cantidad = cantidad;
         this.proveedor = proveedor;
         this.estado = estado;
     }
     
     
-    public Articulo (String descripcion, float costo, float precio, Date fechacompra, Proveedor proveedor, Categoria categoria, Estado estado) {
+    public Articulo (String descripcion, float costo, float precio, int cantidad, Date fechacompra, Proveedor proveedor, Categoria categoria, Estado estado) {
         this.descripcion = descripcion;
         this.costo = costo;
         this.precio = precio;
+        this.cantidad = cantidad;
         this.fechaCompra = fechacompra;
         this.proveedor = proveedor;
         this.categoria = categoria;
         this.estado = estado;
     }
     
-    public Articulo (int id,String descripcion, float costo, float precio, Proveedor proveedor, Categoria categoria, Estado estado) {
+    public Articulo (int id,String descripcion, float costo, float precio, int cantidad, Proveedor proveedor, Categoria categoria, Estado estado) {
         this.id = id;
         this.descripcion = descripcion;
         this.costo = costo;
         this.precio = precio;
+        this.cantidad = cantidad;
         this.proveedor = proveedor;
         this.categoria = categoria;
         this.estado = estado;
     }
 
-    public Articulo(String descripcion, float costo, float precio, Proveedor proveedor, Categoria categoria, Estado estado) {
+    public Articulo(String descripcion, float costo, float precio, int cantidad, Proveedor proveedor, Categoria categoria, Estado estado) {
         this.descripcion = descripcion;
         this.costo = costo;
         this.precio = precio;
+        this.cantidad = cantidad;
         this.proveedor = proveedor;
         this.categoria = categoria;
         this.estado = estado;
@@ -177,6 +183,20 @@ public class Articulo {
      */
     public void setEstado(Estado estado) {
         this.estado = estado;
+    }
+
+    /**
+     * @return the cantidad
+     */
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    /**
+     * @param cantidad the cantidad to set
+     */
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
     }
 
     /**

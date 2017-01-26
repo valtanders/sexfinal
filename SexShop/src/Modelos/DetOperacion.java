@@ -73,4 +73,10 @@ public class DetOperacion {
         this.precio = precio;
         this.cantidad = cantidad;
     }
+    
+    public DetOperacion(Articulo articulo, float precio, int cantidad) {
+        this.articulo = articulo;
+        this.precio = precio;
+        this.cantidad = cantidad;
+    }
 }

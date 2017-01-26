@@ -19,16 +19,27 @@ public class CabOperacion {
     private Usuario usuario;
     private Date fecha;
     private int idVendedor;
+    private float total;
     
     public CabOperacion() {}
     
-    public CabOperacion(int id, TipoOperacion tipoOperacion, Cliente cliente, Usuario usuario, Date fecha, int idVendedor) {
+    public CabOperacion(int id, TipoOperacion tipoOperacion, Cliente cliente, Usuario usuario, Date fecha, int idVendedor, float total) {
         this.id = id;
         this.tipoOperacion = tipoOperacion;
         this.cliente = cliente;
         this.usuario = usuario;
         this.fecha = fecha;
         this.idVendedor = idVendedor;
+        this.total = total;
+    }
+    
+    public CabOperacion(TipoOperacion tipoOperacion, Cliente cliente, Usuario usuario, Date fecha, int idVendedor, float total) {
+        this.tipoOperacion = tipoOperacion;
+        this.cliente = cliente;
+        this.usuario = usuario;
+        this.fecha = fecha;
+        this.idVendedor = idVendedor;
+        this.total = total;
     }
 
     /**
@@ -106,5 +117,19 @@ public class CabOperacion {
      */
     public void setIdVendedor(int idVendedor) {
         this.idVendedor = idVendedor;
+    }
+
+    /**
+     * @return the total
+     */
+    public float getTotal() {
+        return total;
+    }
+
+    /**
+     * @param total the total to set
+     */
+    public void setTotal(float total) {
+        this.total = total;
     }
 }
