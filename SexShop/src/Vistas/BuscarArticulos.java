@@ -37,6 +37,7 @@ public class BuscarArticulos extends javax.swing.JDialog {
 
     public BuscarArticulos(java.awt.Frame parent, boolean modal, ConcurrentHashMap listaarti, String cat) {
         super(parent, modal);
+        this.setTitle("Buscar Articulos");
         initComponents();
         cantidad = 1;
         jspCantidad.setValue(1);

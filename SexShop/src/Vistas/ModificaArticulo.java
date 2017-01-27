@@ -38,6 +38,7 @@ public class ModificaArticulo extends javax.swing.JDialog {
     
     public ModificaArticulo(java.awt.Frame parent, boolean modal, int idarti) {
         super(parent, modal);
+        this.setTitle("Modificar Articulo");
         initComponents();
         idArticulo = idarti;
         btnGrupoArticulos.add(rbModArticuloActivo);

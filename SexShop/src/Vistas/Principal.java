@@ -98,6 +98,7 @@ public class Principal extends javax.swing.JFrame {
 
     public Principal(Usuario user) {
         this.getContentPane().setBackground(Color.WHITE);
+        this.setTitle("Salesforce - 3N Consulting");
         initComponents();
         this.setSize(800, 600);
         this.user = user;
@@ -273,8 +274,8 @@ public class Principal extends javax.swing.JFrame {
                         }
                         idArticulo = arti.getId();
                         lblArticulosDescripcion.setText(arti.getDescripcion());
-                        lblArticulosPrecio.setText(String.valueOf(arti.getPrecio()));
-                        lblArticulosCosto.setText(String.valueOf(arti.getCosto()));
+                        lblArticulosPrecio.setText("$ " + String.valueOf(arti.getPrecio()));
+                        lblArticulosCosto.setText("$ " + String.valueOf(arti.getCosto()));
                         lblArticulosFechaCompra.setText(fechaformat.format(arti.getFechaCompra()));
                         lblArticulosProveedor.setText(arti.getProveedor().getRazonsocial());
                     }
@@ -290,7 +291,7 @@ public class Principal extends javax.swing.JFrame {
                         filaSeleccionadaPelicula = fila;
                         Articulo arti = (Articulo) listaArticulos.get(tblPeliculasTodos.getModel().getValueAt(fila, 0));
                         lblPeliculasCodigo.setText(String.valueOf(arti.getId()));
-                        if (arti.getEstado().getDescripcion().equals("activo")) {
+                        if (arti.getEstado().getDescripcion().equals("ACTIVO")) {
                             lblPeliculasActivo.setForeground(Color.green);
                             lblPeliculasActivo.setText(arti.getEstado().getDescripcion());
                         } else {
@@ -299,8 +300,8 @@ public class Principal extends javax.swing.JFrame {
                         }
                         idPelicula = arti.getId();
                         lblPeliculasDescripcion.setText(arti.getDescripcion());
-                        lblPeliculasPrecio.setText(String.valueOf(arti.getPrecio()));
-                        lblPeliculasCosto.setText(String.valueOf(arti.getCosto()));
+                        lblPeliculasPrecio.setText("$ " + String.valueOf(arti.getPrecio()));
+                        lblPeliculasCosto.setText("$ " + String.valueOf(arti.getCosto()));
                         lblPeliculasFechaCompra.setText(fechaformat.format(arti.getFechaCompra()));
                         lblPeliculasProveedor.setText(arti.getProveedor().getRazonsocial());
                     }
@@ -354,9 +355,9 @@ public class Principal extends javax.swing.JFrame {
                     ConcurrentHashMap.Entry<?, ?> entry = (ConcurrentHashMap.Entry<?, ?>) it.next();
                     if (((Alquiler) entry.getValue()).isActivo()) {
                         precioAlqui = ((Alquiler) entry.getValue()).getPrecio();
-                        dtmPrcioAlqui.addRow(new Object[]{((Alquiler) entry.getValue()).getPrecio(), ((Alquiler) entry.getValue()).getFecha(), "Activo"});
+                        dtmPrcioAlqui.addRow(new Object[]{"$ " + ((Alquiler) entry.getValue()).getPrecio(), fechaformat.format(((Alquiler) entry.getValue()).getFecha()), "Activo"});
                     } else {
-                        dtmPrcioAlqui.addRow(new Object[]{((Alquiler) entry.getValue()).getPrecio(), ((Alquiler) entry.getValue()).getFecha(), "No Activo"});
+                        dtmPrcioAlqui.addRow(new Object[]{"$ " + ((Alquiler) entry.getValue()).getPrecio(), fechaformat.format(((Alquiler) entry.getValue()).getFecha()), "No Activo"});
                     }
                 }
                 tblPreciosAlqui.setModel(dtmPrcioAlqui);
@@ -457,8 +458,6 @@ public class Principal extends javax.swing.JFrame {
         tabVenta = new javax.swing.JPanel();
         panelVentas = new javax.swing.JPanel();
         jPanel9 = new javax.swing.JPanel();
-        jLabel43 = new javax.swing.JLabel();
-        txtVentasCbte = new javax.swing.JTextField();
         jLabel44 = new javax.swing.JLabel();
         txtVentasPV = new javax.swing.JTextField();
         jLabel45 = new javax.swing.JLabel();
@@ -497,8 +496,6 @@ public class Principal extends javax.swing.JFrame {
         tabAlquiler = new javax.swing.JPanel();
         PanelAlquiler = new javax.swing.JPanel();
         jPanel15 = new javax.swing.JPanel();
-        jLabel54 = new javax.swing.JLabel();
-        txtAlquilerCbte = new javax.swing.JTextField();
         jLabel55 = new javax.swing.JLabel();
         txtAlquilerPV = new javax.swing.JTextField();
         jLabel56 = new javax.swing.JLabel();
@@ -746,7 +743,6 @@ public class Principal extends javax.swing.JFrame {
         jLabel89 = new javax.swing.JLabel();
         spinPrecioalqui = new javax.swing.JSpinner();
         btnCambiarPrecio = new javax.swing.JButton();
-        jLabel90 = new javax.swing.JLabel();
         jLabel91 = new javax.swing.JLabel();
         jPanel14 = new javax.swing.JPanel();
         jScrollPane14 = new javax.swing.JScrollPane();
@@ -767,12 +763,7 @@ public class Principal extends javax.swing.JFrame {
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/SalesForce.png"))); // NOI18N
 
-        jLabel43.setText("Cbte:");
-
-        txtVentasCbte.setEditable(false);
-        txtVentasCbte.setText("00");
-
-        jLabel44.setText("Tcket");
+        jLabel44.setText("Ticket");
 
         txtVentasPV.setEditable(false);
         txtVentasPV.setText("0000");
@@ -799,36 +790,29 @@ public class Principal extends javax.swing.JFrame {
         jPanel9Layout.setHorizontalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel43)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtVentasCbte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel44)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtVentasPV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel45)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtVentasNumero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel46)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtVentasVendedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbxVentasVendedores, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addComponent(jLabel66)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel66)
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addComponent(jLabel44)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtVentasPV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel45)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtVentasNumero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel46)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtVentasVendedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbxVentasVendedores, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 81, Short.MAX_VALUE))
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel43)
-                    .addComponent(txtVentasCbte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel44)
                     .addComponent(txtVentasPV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel45)
@@ -1110,12 +1094,7 @@ public class Principal extends javax.swing.JFrame {
 
         TabContent.addTab("VENTA", tabVenta);
 
-        jLabel54.setText("Cbte:");
-
-        txtAlquilerCbte.setEditable(false);
-        txtAlquilerCbte.setText("00");
-
-        jLabel55.setText("Tcket");
+        jLabel55.setText("Ticket");
 
         txtAlquilerPV.setEditable(false);
         txtAlquilerPV.setText("0000");
@@ -1143,35 +1122,28 @@ public class Principal extends javax.swing.JFrame {
             jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel15Layout.createSequentialGroup()
                 .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel77)
                     .addGroup(jPanel15Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel54)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtAlquilerCbte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel55)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtAlquilerPV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel56)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtAlquilerNumero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel77))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel57)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtAlquilerVendedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbxAlquilerVendedores, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(20, Short.MAX_VALUE))
+                        .addComponent(txtAlquilerNumero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel57)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtAlquilerVendedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbxAlquilerVendedores, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(95, Short.MAX_VALUE))
         );
         jPanel15Layout.setVerticalGroup(
             jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel15Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel54)
-                    .addComponent(txtAlquilerCbte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel55)
                     .addComponent(txtAlquilerPV, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel56)
@@ -1643,7 +1615,7 @@ public class Principal extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        btnClientesBuscar.setText("Buscar");
+        btnClientesBuscar.setText("Buscar Pelicula");
         btnClientesBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnClientesBuscarActionPerformed(evt);
@@ -2331,7 +2303,7 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        btnArticulosBuscar.setText("Buscar");
+        btnArticulosBuscar.setText("Buscar Pelicula");
         btnArticulosBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnArticulosBuscarActionPerformed(evt);
@@ -2420,7 +2392,7 @@ public class Principal extends javax.swing.JFrame {
                                     .addGroup(tabArticulosLayout.createSequentialGroup()
                                         .addComponent(jLabel32)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(lblArticulosFechaCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lblArticulosFechaCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jLabel33)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -2596,7 +2568,7 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        btnPeliculasBuscar.setText("Buscar");
+        btnPeliculasBuscar.setText("Buscar Pelicula");
         btnPeliculasBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPeliculasBuscarActionPerformed(evt);
@@ -2675,28 +2647,30 @@ public class Principal extends javax.swing.JFrame {
                             .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 618, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap())
                     .addGroup(tabPeliculasLayout.createSequentialGroup()
-                        .addGroup(tabPeliculasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(tabPeliculasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(tabPeliculasLayout.createSequentialGroup()
                                 .addComponent(jLabel76)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblPeliculasFechaCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel75)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblPeliculasProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                .addComponent(lblPeliculasFechaCompra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(tabPeliculasLayout.createSequentialGroup()
                                 .addComponent(jLabel72)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblPeliculasDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblPeliculasDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(tabPeliculasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(tabPeliculasLayout.createSequentialGroup()
                                 .addComponent(jLabel73)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lblPeliculasPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel74)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lblPeliculasCosto, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(lblPeliculasCosto, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(tabPeliculasLayout.createSequentialGroup()
+                                .addComponent(jLabel75)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblPeliculasProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())
                     .addGroup(tabPeliculasLayout.createSequentialGroup()
                         .addGap(69, 69, 69)
@@ -2748,7 +2722,7 @@ public class Principal extends javax.swing.JFrame {
                         .addGroup(tabPeliculasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnPeliculasModificar)
                             .addComponent(btnPeliculasElminar))))
-                .addContainerGap(75, Short.MAX_VALUE))
+                .addContainerGap(61, Short.MAX_VALUE))
         );
 
         TabContent.addTab("PELICULAS", tabPeliculas);
@@ -3005,8 +2979,6 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        jLabel90.setText("Precio actual:");
-
         jLabel91.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -3027,8 +2999,7 @@ public class Principal extends javax.swing.JFrame {
                                 .addGap(83, 83, 83)
                                 .addComponent(btnCambiarPrecio))
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel90)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGap(90, 90, 90)
                                 .addComponent(jLabel91, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 26, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -3039,10 +3010,8 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel80, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel90)
-                    .addComponent(jLabel91))
-                .addGap(19, 19, 19)
+                .addComponent(jLabel91)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel89)
                     .addComponent(spinPrecioalqui, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -3174,15 +3143,20 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnProveedoresAceptarActionPerformed
 
     private void btnPeliculasElminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPeliculasElminarActionPerformed
-        int resp = JOptionPane.showConfirmDialog(null, "¿Desea eliminar la pelicula seleccionado?", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (JOptionPane.YES_OPTION == resp) {
-            try {
-                ctrlarticulos.eliminarArticulo(idPelicula);
-                DefaultTableModel dtm = (DefaultTableModel) tblPeliculasTodos.getModel();
-                dtm.removeRow(filaSeleccionadaPelicula);
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+        if (idPelicula != 0) {
+            int resp = JOptionPane.showConfirmDialog(null, "¿Desea eliminar la pelicula " + ((Articulo) listaClientes.get(idCliente)).getDescripcion() + "?", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (JOptionPane.YES_OPTION == resp) {
+                try {
+                    ctrlarticulos.eliminarArticulo(idPelicula);
+                    DefaultTableModel dtm = (DefaultTableModel) tblPeliculasTodos.getModel();
+                    dtm.removeRow(filaSeleccionadaPelicula);
+                    idPelicula = 0;
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+                }
             }
+        } else {
+            JOptionPane.showMessageDialog(null, "Debe seleccionar un articulo", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnPeliculasElminarActionPerformed
 
@@ -3201,6 +3175,7 @@ public class Principal extends javax.swing.JFrame {
                     dtm.addRow(new Object[]{modificado.getId(), modificado.getDescripcion().toUpperCase(), modificado.getPrecio()});
                     limpiarDatosPeliculas();
                     limpiarnfoPeliculas();
+                    idPelicula = 0;
                 }
             });
             modart.show();
@@ -3272,15 +3247,20 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnClientesBuscarActionPerformed
 
     private void btnClientesElminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClientesElminarActionPerformed
-        int resp = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el cliente seleccionado?", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (JOptionPane.YES_OPTION == resp) {
-            try {
-                ctrlclientes.EliminarCliente(idCliente);
-                DefaultTableModel dtm = (DefaultTableModel) tblClientestodos.getModel();
-                dtm.removeRow(filaSeleccionadaCliente);
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+        if (idCliente != 0) {
+            int resp = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el cliente " + ((Cliente) listaClientes.get(idCliente)).getApellido() + ", " + ((Cliente) listaClientes.get(idCliente)).getNombre() + "?", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (JOptionPane.YES_OPTION == resp) {
+                try {
+                    ctrlclientes.EliminarCliente(idCliente);
+                    DefaultTableModel dtm = (DefaultTableModel) tblClientestodos.getModel();
+                    dtm.removeRow(filaSeleccionadaCliente);
+                    idCliente = 0;
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+                }
             }
+        } else {
+            JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnClientesElminarActionPerformed
 
@@ -3297,6 +3277,7 @@ public class Principal extends javax.swing.JFrame {
                     dtm.removeRow(filaSeleccionadaCliente);
                     dtm.addRow(new Object[]{modificado.getIdCliente(), modificado.getApellido().toUpperCase(), modificado.getNombre(), modificado.getDireccion()});
                     limpiarInfoClientes();
+                    idCliente = 0;
                 }
             });
             modcli.show();
@@ -3705,15 +3686,20 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnArticulosBuscarActionPerformed
 
     private void btnArticulosElminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnArticulosElminarActionPerformed
-        int resp = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el articulo seleccionado?", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (JOptionPane.YES_OPTION == resp) {
-            try {
-                ctrlarticulos.eliminarArticulo(idArticulo);
-                DefaultTableModel dtm = (DefaultTableModel) tblArticulosTodos.getModel();
-                dtm.removeRow(filaSeleccionadaArticulo);
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+        if (idArticulo != 0) {
+            int resp = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el articulo " + ((Articulo) listaClientes.get(idCliente)).getDescripcion() + "?", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (JOptionPane.YES_OPTION == resp) {
+                try {
+                    ctrlarticulos.eliminarArticulo(idArticulo);
+                    DefaultTableModel dtm = (DefaultTableModel) tblArticulosTodos.getModel();
+                    dtm.removeRow(filaSeleccionadaArticulo);
+                    idArticulo = 0;
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+                }
             }
+        } else {
+            JOptionPane.showMessageDialog(null, "Debe seleccionar un articulo", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnArticulosElminarActionPerformed
 
@@ -3731,6 +3717,7 @@ public class Principal extends javax.swing.JFrame {
                     limpiarnfoArtciulos();
                     dtm.addRow(new Object[]{modificado.getId(), modificado.getDescripcion().toUpperCase(), modificado.getPrecio()});
                     limpiarDatosArticulos();
+                    idArticulo = 0;
                 }
             });
             modart.show();
@@ -4088,7 +4075,6 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel40;
     private javax.swing.JLabel jLabel41;
     private javax.swing.JLabel jLabel42;
-    private javax.swing.JLabel jLabel43;
     private javax.swing.JLabel jLabel44;
     private javax.swing.JLabel jLabel45;
     private javax.swing.JLabel jLabel46;
@@ -4100,7 +4086,6 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel51;
     private javax.swing.JLabel jLabel52;
     private javax.swing.JLabel jLabel53;
-    private javax.swing.JLabel jLabel54;
     private javax.swing.JLabel jLabel55;
     private javax.swing.JLabel jLabel56;
     private javax.swing.JLabel jLabel57;
@@ -4140,7 +4125,6 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel88;
     private javax.swing.JLabel jLabel89;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JLabel jLabel90;
     private javax.swing.JLabel jLabel91;
     private javax.swing.JLabel jLabel92;
     private javax.swing.JLabel jLabel93;
@@ -4265,7 +4249,6 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTable tblStock;
     private javax.swing.JTable tblUsuariosTodos;
     private javax.swing.JTable tblVentasTablaVentas;
-    private javax.swing.JTextField txtAlquilerCbte;
     private javax.swing.JTextField txtAlquilerCodArti;
     private javax.swing.JTextField txtAlquilerCodigoCli;
     private javax.swing.JTextField txtAlquilerDevoluciones;
@@ -4304,7 +4287,6 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JPasswordField txtUsuariosContraseña;
     private javax.swing.JTextField txtUsuariosNombre;
     private javax.swing.JPasswordField txtUsuariosRepContraseña;
-    private javax.swing.JTextField txtVentasCbte;
     private javax.swing.JTextField txtVentasCodArti;
     private javax.swing.JTextField txtVentasCodigoCli;
     private javax.swing.JTextField txtVentasDevoluciones;

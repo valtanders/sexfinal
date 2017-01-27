@@ -36,6 +36,7 @@ public class ModificaCliente extends javax.swing.JDialog {
     
     public ModificaCliente(java.awt.Frame parent, boolean modal, int idcli) {
         super(parent, modal);
+        this.setTitle("Modificar Cliente");
         initComponents();
         idcliente = idcli;
         btnGrupo.add(rbModClienteActivo);

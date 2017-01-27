@@ -38,6 +38,7 @@ public class BuscarCliente extends javax.swing.JDialog {
     
     public BuscarCliente(java.awt.Frame parent, boolean modal, ConcurrentHashMap listaclientes) {
         super(parent, modal);
+        this.setTitle("Buscar Clientes");
         initComponents();
         this.listaclientes = listaclientes;
         esto = this;
