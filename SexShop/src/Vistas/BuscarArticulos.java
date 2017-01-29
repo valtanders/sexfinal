@@ -50,10 +50,10 @@ public class BuscarArticulos extends javax.swing.JDialog {
         };
         for (Iterator it = listaArticulos.entrySet().iterator(); it.hasNext();) {
             ConcurrentHashMap.Entry<?, ?> entry = (ConcurrentHashMap.Entry<?, ?>) it.next();
-            if (cat.equals("venta")) {
+            if (cat.equals("venta") && ((Articulo) entry.getValue()).getEstado().getId() == 1) {
                 dtmarti.addRow(new Object[]{entry.getKey(), ((Articulo) entry.getValue()).getDescripcion().toUpperCase(), ((Articulo) entry.getValue()).getPrecio()});
             } else {
-                if (((Articulo) entry.getValue()).getCategoria().getId() == 1) {
+                if (((Articulo) entry.getValue()).getCategoria().getId() == 1 && ((Articulo) entry.getValue()).getEstado().getId() == 1) {
                     dtmarti.addRow(new Object[]{entry.getKey(), ((Articulo) entry.getValue()).getDescripcion().toUpperCase(), ((Articulo) entry.getValue()).getPrecio()});
                 }
             }

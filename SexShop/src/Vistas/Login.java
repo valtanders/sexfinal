@@ -133,9 +133,8 @@ public class Login extends javax.swing.JFrame {
             } else {
                 JOptionPane.showMessageDialog(null, "Complete los Campos.", "Security", JOptionPane.ERROR_MESSAGE);
             }
-
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage());
+            JOptionPane.showMessageDialog(null, "No se encuentra la base de datos, por favor contactese con el desarrollador", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btn_logActionPerformed
 
@@ -156,7 +155,7 @@ public class Login extends javax.swing.JFrame {
             btn_log.doClick();
         }
     }
-    
+
     public static void main(String args[]) {
 
         java.awt.EventQueue.invokeLater(new Runnable() {

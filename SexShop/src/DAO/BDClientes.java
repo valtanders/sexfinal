@@ -254,4 +254,36 @@ public class BDClientes implements Interfaz{
             return estado;
         }
     }
+    
+    public ConcurrentHashMap traeCumpleanieros() throws SQLException {
+        Conexion oCon = new Conexion();
+        ResultSet rs = null;
+        ConcurrentHashMap resp = new ConcurrentHashMap<String, String>();
+        oCon.getConexion();
+        String insert = "SELECT C.idcliente,C.notas,C.nombre,C.apellido,C.direccion,C.mail,C.telefono,C.dni,C.fechanac,C.codigoCliente, DC.idDescuentoCli, DC.descripcion, DC.porcentaje, DC.importe,E.idEstados,E.Descripcion  FROM cliente C \n" +
+                        "INNER JOIN descuentocli DC ON idDescuentoCli = C.fk_idDescuentoCli \n" +
+                        "INNER JOIN estados E on idEstados = C.fk_idEstados \n" +
+                        "where C.fk_idEstados <> 3 and month(fechanac) = month(curdate()) and day(fechanac) = day(curdate())";
+        try {
+            PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert);
+            rs = sentencia.executeQuery();
+
+            Cliente cliente;
+            DescuentoCli desc;
+            Estado est;
+            while (rs.next()) {
+                est = new Estado(rs.getInt(15),rs.getString(16));
+                desc = new DescuentoCli(rs.getInt(11), rs.getString(12), rs.getInt(13), rs.getFloat(14));
+                cliente = new Cliente(rs.getInt(1), desc, rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getDate(9),rs.getString(10),est);
+                resp.put(cliente.getIdCliente(), cliente);
+            }
+            rs.close();
+            sentencia.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            oCon.close();
+            return resp;
+        }
+    }
 }

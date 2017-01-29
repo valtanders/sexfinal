@@ -15,20 +15,26 @@ public class Proveedor {
     private String direccion;
     private String telefono;
     private String mail;
-    private String codigo;
     private Estado estado;
     
     public Proveedor() {}
     
     public Proveedor(int id) {this.id = id;}
     
-    public Proveedor(int id, String razonsocial, String direccion, String telefono, String mail, String codigo, Estado estado) {
+    public Proveedor(int id, String razonsocial, String direccion, String telefono, String mail, Estado estado) {
         this.id = id;
         this.razonsocial = razonsocial;
         this.direccion = direccion;
         this.telefono = telefono;
         this.mail = mail;
-        this.codigo = codigo;
+        this.estado = estado;
+    }
+    
+    public Proveedor(String razonsocial, String direccion, String telefono, String mail, Estado estado) {
+        this.razonsocial = razonsocial;
+        this.direccion = direccion;
+        this.telefono = telefono;
+        this.mail = mail;
         this.estado = estado;
     }
 
@@ -93,20 +99,6 @@ public class Proveedor {
      */
     public void setMail(String mail) {
         this.mail = mail;
-    }
-
-    /**
-     * @return the codigo
-     */
-    public String getCodigo() {
-        return codigo;
-    }
-
-    /**
-     * @param codigo the codigo to set
-     */
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
     }
 
     /**

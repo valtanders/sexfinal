@@ -6,6 +6,7 @@
 package Controladoras;
 
 import DAO.BDProveedores;
+import Modelos.Proveedor;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,5 +20,17 @@ public class ctrlABMProveedores {
     
     public ConcurrentHashMap traerTodos () throws SQLException {
         return bdproveedores.traerTodos();
+    }
+    
+    public int agregar(Proveedor proveedor) throws SQLException{
+        return bdproveedores.agregar(proveedor);
+    }
+    
+    public Proveedor modificar(Proveedor proveedor) throws SQLException{
+        return bdproveedores.modificar(proveedor);
+    }
+    
+    public Proveedor traerPorId(int id) throws SQLException {
+        return bdproveedores.traerProveedorPorId(id);
     }
 }

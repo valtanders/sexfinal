@@ -56,6 +56,10 @@ public class ctrlABMClientes {
     public Estado traeEstado (int id) throws SQLException{
         return bdclientes.TraeEstado(id);
     }
+    
+    public ConcurrentHashMap traeCumpleanieros() throws SQLException {
+        return bdclientes.traeCumpleanieros();
+    }
 
 
 }
