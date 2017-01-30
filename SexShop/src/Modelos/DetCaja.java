@@ -15,22 +15,31 @@ public class DetCaja {
     private String concepto;
     private Caja caja;
     private DetOperacion detalleOperacion;
+    private String tipoOperacion;
     
     public DetCaja() {}
     
-    public DetCaja(int id, float monto, String concepto, Caja caja, DetOperacion detOperacion) {
+    public DetCaja(int id, float monto, String concepto, Caja caja, DetOperacion detOperacion, String tipoOperacion) {
         this.id = id;
         this.monto = monto;
         this.concepto = concepto;
         this.caja = caja;
         this.detalleOperacion = detOperacion;
+        this.tipoOperacion = tipoOperacion;
     }
     
-    public DetCaja(float monto, String concepto, Caja caja, DetOperacion detOperacion) {
+    public DetCaja(int id, float monto, String concepto) {
+        this.id = id;
+        this.monto = monto;
+        this.concepto = concepto;
+    }
+    
+    public DetCaja(float monto, String concepto, Caja caja, DetOperacion detOperacion, String tipoOperacion) {
         this.monto = monto;
         this.concepto = concepto;
         this.caja = caja;
         this.detalleOperacion = detOperacion;
+        this.tipoOperacion = tipoOperacion;
     }
 
     /**
@@ -94,5 +103,19 @@ public class DetCaja {
      */
     public void setDetalleOperacion(DetOperacion detalleOperacion) {
         this.detalleOperacion = detalleOperacion;
+    }
+
+    /**
+     * @return the tipoOperacion
+     */
+    public String getTipoOperacion() {
+        return tipoOperacion;
+    }
+
+    /**
+     * @param tipoOperacion the tipoOperacion to set
+     */
+    public void setTipoOperacion(String tipoOperacion) {
+        this.tipoOperacion = tipoOperacion;
     }
 }

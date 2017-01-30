@@ -40,6 +40,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
@@ -63,6 +65,7 @@ public class Principal extends javax.swing.JFrame {
     private ConcurrentHashMap listaUsuarios;
     private ConcurrentHashMap listaPreciosAlqui;
     private ConcurrentHashMap listaClientesCumple;
+    private ConcurrentHashMap listaingregre;
     private ArrayList listaDetalleVenta;
     private ArrayList listaDetalleAlqui;
     private ctrlABMClientes ctrlclientes = new ctrlABMClientes();
@@ -83,15 +86,21 @@ public class Principal extends javax.swing.JFrame {
     private int filaSeleccionadaArticuloStock;
     private int filaSeleccionadaPelicula;
     private int filaSeleccionadaProveedor;
+    private int filaSeleccionadaInreso;
+    private int filaSeleccionadaEgreso;
     private int keyCajaAper;
+    private int iddetalle;
     private float totalVentas;
     private float totalAlquiler;
     private float totalCaja;
     private float precioAlqui;
+    private float valorAnteriorIngre;
+    private float valorAnteriorEgre;
     private TableRowSorter trsFiltro;
     private Cliente clienteVenta;
     private Cliente clienteAlqui;
     private Caja caja;
+    private Caja cajaCerrada;
     private DetCaja detCaja;
     private Usuario user;
     private CumplesF cumples;
@@ -130,12 +139,16 @@ public class Principal extends javax.swing.JFrame {
         idProveedor = 0;
         totalVentas = 0;
         totalAlquiler = 0;
+        iddetalle = 0;
+        valorAnteriorIngre =0;
+        valorAnteriorEgre =0;
         listaDetalleVenta = new ArrayList();
         listaDetalleAlqui = new ArrayList();
         clienteVenta = null;
 
         try {
             caja = ctrlcaja.cajaAbierta();
+            cajaCerrada = ctrlcaja.traeUltimoCierre();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
         }
@@ -148,6 +161,14 @@ public class Principal extends javax.swing.JFrame {
             txtCajaMontoCierre.setEnabled(false);
             lblCajaEstado.setText("Caja Cerrada");
             lblCajaEstado.setForeground(Color.red);
+            if (cajaCerrada.getUsuario().getId() < 10) {
+                lblCajaCodigoVendedorCierre.setText("0" + cajaCerrada.getUsuario().getId());
+            } else {
+                lblCajaCodigoVendedorCierre.setText(String.valueOf(cajaCerrada.getUsuario().getId()));
+            }
+            lblCajaNomVendedorCierre.setText(cajaCerrada.getUsuario().getNombre());
+            Date cierre = cajaCerrada.getFechaAper();
+            lblCajaFechaCierre.setText(fechaformat.format(cierre));
         } else {
             try {
                 detCaja = ctrlcaja.traeUltimoDetalleAper();
@@ -162,6 +183,12 @@ public class Principal extends javax.swing.JFrame {
                 txtCajaMontoAper.setText(String.valueOf(totalCaja));
                 lblCajaEstado.setText("Caja Abierta");
                 lblCajaEstado.setForeground(Color.green);
+                if (caja.getUsuario().getId() < 10) {
+                    lblCajaCodigoVendedor.setText("0" + caja.getUsuario().getId());
+                } else {
+                    lblCajaCodigoVendedor.setText(String.valueOf(caja.getUsuario().getId()));
+                }
+                lblCajaNomVendedor.setText(caja.getUsuario().getNombre());
                 Date aper = caja.getFechaAper();
                 lblCajaFechaAper.setText(fechaformat.format(aper));
             }
@@ -203,7 +230,7 @@ public class Principal extends javax.swing.JFrame {
         });
         tblVentasTablaVentas.setModel(dtventas);
         tblAlquilerTablaAlqui.setModel(dtalqui);
-        DefaultTableModel dtmingre = new DefaultTableModel(new Object[]{"Descripcion Ingreso", "Monto"}, 0) {
+        DefaultTableModel dtmingre = new DefaultTableModel(new Object[]{"cod", "Descripcion Ingreso", "Monto"}, 0) {
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return false;
             }
@@ -216,7 +243,7 @@ public class Principal extends javax.swing.JFrame {
                 }
             }
         });
-        DefaultTableModel dtmegre = new DefaultTableModel(new Object[]{"Descripcion Ingreso", "Monto"}, 0) {
+        DefaultTableModel dtmegre = new DefaultTableModel(new Object[]{"cod", "Descripcion Ingreso", "Monto"}, 0) {
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return false;
             }
@@ -229,26 +256,98 @@ public class Principal extends javax.swing.JFrame {
                 }
             }
         });
+        txtCajaTotalIngre.setText("0");
+        txtCajaTotalEgre.setText("0");
+        if (caja != null) {
+            float totalingre = 0;
+            float totalegre = 0;
+            listaingregre = ctrlcaja.traerDetallePorCaja(caja.getIdCaja());
+            for (Iterator it = listaingregre.entrySet().iterator(); it.hasNext();) {
+                ConcurrentHashMap.Entry<?, ?> entry = (ConcurrentHashMap.Entry<?, ?>) it.next();
+                if (((DetCaja) entry.getValue()).getTipoOperacion().equals("I")) {
+                    dtmingre.addRow(new Object[]{entry.getKey(), ((DetCaja) entry.getValue()).getConcepto(), ((DetCaja) entry.getValue()).getMonto()});
+                    totalingre += ((DetCaja) entry.getValue()).getMonto();
+                } else {
+                    dtmegre.addRow(new Object[]{entry.getKey(), ((DetCaja) entry.getValue()).getConcepto(), ((DetCaja) entry.getValue()).getMonto()});
+                    totalegre += ((DetCaja) entry.getValue()).getMonto();
+                }
+            }
+            if (totalingre > 0) {
+                txtCajaTotalIngre.setText(String.valueOf(totalingre));
+            }
+            if (totalegre > 0) {
+                txtCajaTotalEgre.setText(String.valueOf(totalegre));
+            }
+        }
         tblCajaIngresos.setModel(dtmingre);
+        tblCajaIngresos.getColumnModel().getColumn(0).setMaxWidth(0);
+        tblCajaIngresos.getColumnModel().getColumn(0).setMinWidth(0);
+        tblCajaIngresos.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
+        tblCajaIngresos.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
+        tblCajaIngresos.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                int fila = tblCajaIngresos.rowAtPoint(e.getPoint());
+                int columna = tblCajaIngresos.columnAtPoint(e.getPoint());
+                if ((fila > -1) && (columna > -1)) {
+                    filaSeleccionadaInreso = fila;
+                    DetCaja detcaja = (DetCaja) listaingregre.get(tblCajaIngresos.getModel().getValueAt(fila, 0));
+                    if (!detcaja.getConcepto().contains("Apertura")) {
+                        txtCajaConceptoIngr.setText(detcaja.getConcepto());
+                        txtCajaMontoIngr.setValue(detcaja.getMonto());
+                        valorAnteriorIngre = detcaja.getMonto();
+                        iddetalle = detcaja.getId();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "No selecciono ingreso o es Apertura", "Invalido", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+
+        });
         tblCajaEgresos.setModel(dtmegre);
+        tblCajaEgresos.getColumnModel().getColumn(0).setMaxWidth(0);
+        tblCajaEgresos.getColumnModel().getColumn(0).setMinWidth(0);
+        tblCajaEgresos.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
+        tblCajaEgresos.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
+        tblCajaEgresos.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                int fila = tblCajaEgresos.rowAtPoint(e.getPoint());
+                int columna = tblCajaEgresos.columnAtPoint(e.getPoint());
+                if ((fila > -1) && (columna > -1)) {
+                    filaSeleccionadaEgreso = fila;
+                    DetCaja detcaja = (DetCaja) listaingregre.get(tblCajaEgresos.getModel().getValueAt(fila, 0));
+                    if (!detcaja.getConcepto().contains("Cierre")) {
+                        txtCajaConceptoEgre.setText(detcaja.getConcepto());
+                        txtCajaMontoEgre.setValue(detcaja.getMonto());
+                        valorAnteriorEgre = detcaja.getMonto();
+                        iddetalle = detcaja.getId();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "No selecciono ingreso o es Cierre", "Invalido", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+
+        });
         try {
             listaProveedores = ctrlproveedores.traerTodos();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
         }
-        if (listaProveedores != null) {
+        if (listaProveedores
+                != null) {
             for (Iterator it = listaProveedores.entrySet().iterator(); it.hasNext();) {
                 ConcurrentHashMap.Entry<?, ?> entry = (ConcurrentHashMap.Entry<?, ?>) it.next();
                 cbxArticulosProveedores.addItem(((Proveedor) entry.getValue()));
                 cbxPeliculasProveedores.addItem(((Proveedor) entry.getValue()));
             }
         }
+
         try {
             listaArticulos = ctrlarticulos.traerTodos();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
         }
-        if (listaArticulos != null) {
+        if (listaArticulos
+                != null) {
             DefaultTableModel dtmarti = new DefaultTableModel(new Object[]{"Codigo", "Descripcion", "Precio"}, 0) {
                 public boolean isCellEditable(int rowIndex, int columnIndex) {
                     return false;
@@ -321,12 +420,14 @@ public class Principal extends javax.swing.JFrame {
                 }
             });
         }
+
         try {
             listaUsuarios = ctrlusuarios.traerTodo();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
         }
-        if (listaUsuarios != null) {
+        if (listaUsuarios
+                != null) {
             for (Iterator it = listaUsuarios.entrySet().iterator(); it.hasNext();) {
                 ConcurrentHashMap.Entry<?, ?> entry = (ConcurrentHashMap.Entry<?, ?>) it.next();
                 cbxAlquilerVendedores.addItem(((Usuario) entry.getValue()));
@@ -336,7 +437,9 @@ public class Principal extends javax.swing.JFrame {
         Usuario item = null;
         int i = 0;
         boolean esta = false;
-        while (i < cbxAlquilerVendedores.getItemCount() && !esta) {
+
+        while (i < cbxAlquilerVendedores.getItemCount()
+                && !esta) {
             item = (Usuario) cbxAlquilerVendedores.getItemAt(i);
             if (item.getId() == user.getId()) {
                 cbxAlquilerVendedores.setSelectedIndex(i);
@@ -345,14 +448,18 @@ public class Principal extends javax.swing.JFrame {
             }
             i++;
         }
-        if (item.getId() < 10) {
+
+        if (item.getId()
+                < 10) {
             txtAlquilerVendedor.setText("0" + String.valueOf(user.getId()));
             txtVentasVendedor.setText("0" + String.valueOf(user.getId()));
         } else {
             txtAlquilerVendedor.setText(String.valueOf(user.getId()));
             txtVentasVendedor.setText(String.valueOf(user.getId()));
         }
-        if (user.getRol() == 1) {
+
+        if (user.getRol()
+                == 1) {
             DefaultTableModel dtmProvee = new DefaultTableModel(new Object[]{"Codigo", "Nombre", "Direccion", "Telefono"}, 0) {
                 public boolean isCellEditable(int rowIndex, int columnIndex) {
                     return false;
@@ -460,7 +567,7 @@ public class Principal extends javax.swing.JFrame {
                             lblClientesFechaNac.setText(fechaformat.format(nombre.getFechanac()));
                             lblClientesMail.setText(nombre.getMail());
                             lblClientesNotas.setText(nombre.getNotas());
-                            if(listaClientesCumple.containsKey(nombre.getIdCliente())){
+                            if (listaClientesCumple.containsKey(nombre.getIdCliente())) {
                                 lblClientesCumple.setText("Hoy es su cumpleaños");
                                 lblClientesCumple.setForeground(Color.blue);
                             } else {
@@ -680,6 +787,14 @@ public class Principal extends javax.swing.JFrame {
         jLabel88 = new javax.swing.JLabel();
         txtCajaMontoCierre = new javax.swing.JTextField();
         btnCajaCierre = new javax.swing.JButton();
+        jLabel21 = new javax.swing.JLabel();
+        jLabel96 = new javax.swing.JLabel();
+        txtCajaConceptoIngr = new javax.swing.JTextField();
+        txtCajaConceptoEgre = new javax.swing.JTextField();
+        jLabel98 = new javax.swing.JLabel();
+        jLabel100 = new javax.swing.JLabel();
+        txtCajaMontoIngr = new javax.swing.JSpinner();
+        txtCajaMontoEgre = new javax.swing.JSpinner();
         tabUsuarios = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         txtTituloAltaUsuario = new java.awt.Label();
@@ -1939,10 +2054,25 @@ public class Principal extends javax.swing.JFrame {
         jScrollPane13.setViewportView(tblCajaEgresos);
 
         btnCajaAnadirIngre.setText("Añadir");
+        btnCajaAnadirIngre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCajaAnadirIngreActionPerformed(evt);
+            }
+        });
 
         btnCajaModificarIngre.setText("Modificar");
+        btnCajaModificarIngre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCajaModificarIngreActionPerformed(evt);
+            }
+        });
 
         btnCajaEliminarIngre.setText("Eliminar");
+        btnCajaEliminarIngre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCajaEliminarIngreActionPerformed(evt);
+            }
+        });
 
         jLabel82.setText("Total");
 
@@ -1951,10 +2081,25 @@ public class Principal extends javax.swing.JFrame {
         txtCajaTotalEgre.setEditable(false);
 
         btnCajaanadirEgre.setText("Añadir");
+        btnCajaanadirEgre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCajaanadirEgreActionPerformed(evt);
+            }
+        });
 
         btnCajaModificarEgre.setText("Modificar");
+        btnCajaModificarEgre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCajaModificarEgreActionPerformed(evt);
+            }
+        });
 
         btnCajaEliminarEgre.setText("Eliminar");
+        btnCajaEliminarEgre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCajaEliminarEgreActionPerformed(evt);
+            }
+        });
 
         jLabel83.setText("Total");
 
@@ -1967,6 +2112,12 @@ public class Principal extends javax.swing.JFrame {
         jLabel87.setText("Retira");
 
         jLabel88.setText("Cierre de caja:");
+
+        txtCajaMontoCierre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCajaMontoCierreActionPerformed(evt);
+            }
+        });
 
         btnCajaCierre.setText("Cerrar Caja");
         btnCajaCierre.addActionListener(new java.awt.event.ActionListener() {
@@ -1987,56 +2138,60 @@ public class Principal extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblCajaFechaCierre, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel21Layout.createSequentialGroup()
-                        .addComponent(jLabel87)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtCajaRetiro, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnCajaCierre))
-                    .addGroup(jPanel21Layout.createSequentialGroup()
-                        .addComponent(jLabel85)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblCajaCodigoVendedorCierre, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblCajaNomVendedorCierre, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel88)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtCajaMontoCierre, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .addComponent(jLabel85)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblCajaCodigoVendedorCierre, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblCajaNomVendedorCierre, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(41, 41, 41)
+                .addComponent(jLabel87)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtCajaRetiro, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel88)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtCajaMontoCierre, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnCajaCierre))
         );
         jPanel21Layout.setVerticalGroup(
             jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel21Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel21Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel86, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel21Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(lblCajaFechaCierre, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel84)
-                                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jLabel85)
-                                        .addComponent(lblCajaCodigoVendedorCierre, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(lblCajaNomVendedorCierre, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(jPanel21Layout.createSequentialGroup()
-                                .addGap(2, 2, 2)
-                                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel88)
-                                    .addComponent(txtCajaMontoCierre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel87)
-                        .addComponent(txtCajaRetiro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnCajaCierre))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(2, 2, 2)
+                        .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel88)
+                            .addComponent(txtCajaMontoCierre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnCajaCierre)))
+                    .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(lblCajaFechaCierre, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel84)
+                            .addComponent(jLabel86))
+                        .addGroup(jPanel21Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtCajaRetiro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel87))
+                        .addComponent(jLabel85)
+                        .addComponent(lblCajaNomVendedorCierre, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblCajaCodigoVendedorCierre, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 30, Short.MAX_VALUE))
         );
+
+        jLabel21.setText("Monto:");
+
+        jLabel96.setText("Concepto:");
+
+        jLabel98.setText("Monto:");
+
+        jLabel100.setText("Concepto:");
+
+        txtCajaMontoIngr.setModel(new javax.swing.SpinnerNumberModel(0.0f, null, null, 1.0f));
+        txtCajaMontoIngr.setEditor(new javax.swing.JSpinner.NumberEditor(txtCajaMontoIngr, ""));
+
+        txtCajaMontoEgre.setModel(new javax.swing.SpinnerNumberModel(0.0f, null, null, 1.0f));
+        txtCajaMontoEgre.setEditor(new javax.swing.JSpinner.NumberEditor(txtCajaMontoEgre, ""));
 
         javax.swing.GroupLayout tabCajaLayout = new javax.swing.GroupLayout(tabCaja);
         tabCaja.setLayout(tabCajaLayout);
@@ -2075,10 +2230,6 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(tabCajaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(tabCajaLayout.createSequentialGroup()
-                        .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 84, Short.MAX_VALUE)
-                        .addComponent(jScrollPane13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(tabCajaLayout.createSequentialGroup()
                         .addComponent(btnCajaAnadirIngre)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCajaModificarIngre)
@@ -2098,7 +2249,30 @@ public class Principal extends javax.swing.JFrame {
                         .addComponent(jLabel83)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtCajaTotalEgre, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tabCajaLayout.createSequentialGroup()
+                        .addGroup(tabCajaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(tabCajaLayout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(jLabel21)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtCajaMontoIngr, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel96)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtCajaConceptoIngr, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(tabCajaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(tabCajaLayout.createSequentialGroup()
+                                .addComponent(jLabel98)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtCajaMontoEgre, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel100)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtCajaConceptoEgre, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         tabCajaLayout.setVerticalGroup(
@@ -2129,6 +2303,16 @@ public class Principal extends javax.swing.JFrame {
                     .addComponent(jScrollPane13, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(tabCajaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel21)
+                    .addComponent(jLabel96)
+                    .addComponent(txtCajaConceptoIngr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel98)
+                    .addComponent(jLabel100)
+                    .addComponent(txtCajaConceptoEgre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCajaMontoIngr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCajaMontoEgre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(3, 3, 3)
+                .addGroup(tabCajaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCajaAnadirIngre)
                     .addComponent(btnCajaModificarIngre)
                     .addComponent(btnCajaEliminarIngre)
@@ -2141,7 +2325,7 @@ public class Principal extends javax.swing.JFrame {
                     .addComponent(txtCajaTotalEgre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel21, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         TabContent.addTab("CAJA", tabCaja);
@@ -3549,11 +3733,10 @@ public class Principal extends javax.swing.JFrame {
                 if (buscado != null) {
                     lblNombreClientellenaralq.setText(buscado.getApellido() + ", " + buscado.getNombre());
                     lblCodigoClientellenaralq.setText(String.valueOf(buscado.getIdCliente()));
-                    if(listaClientesCumple.containsKey(buscado.getIdCliente())){
+                    if (listaClientesCumple.containsKey(buscado.getIdCliente())) {
                         lblAlquilerCumple.setText("Hoy es su cumpleaños");
                         lblAlquilerCumple.setForeground(Color.blue);
-                    }
-                    else {
+                    } else {
                         lblAlquilerCumple.setText("");
                     }
                     clienteVenta = buscado;
@@ -3575,11 +3758,10 @@ public class Principal extends javax.swing.JFrame {
                     lblNombreClientealq.setText("Nombre");
                     lblNombreClientellenaralq.setText(clienteAlqui.getApellido() + ", " + clienteAlqui.getNombre());
                     lblCodigoClientellenaralq.setText(String.valueOf(clienteAlqui.getIdCliente()));
-                    if(listaClientesCumple.containsKey(clienteAlqui.getIdCliente())){
+                    if (listaClientesCumple.containsKey(clienteAlqui.getIdCliente())) {
                         lblAlquilerCumple.setText("Hoy es su cumpleaños");
                         lblAlquilerCumple.setForeground(Color.blue);
-                    }
-                    else {
+                    } else {
                         lblAlquilerCumple.setText("");
                     }
                     txtAlquilerCodigoCli.setText("");
@@ -3735,8 +3917,8 @@ public class Principal extends javax.swing.JFrame {
         }
         if (abre) {
             try {
-                keyCajaAper = ctrlcaja.abrirCaja(ahora);
-                ctrlcaja.insertarDetalle(new DetCaja(monto, "Apertura " + fechaformat.format(ahora), new Caja(keyCajaAper), null));
+                keyCajaAper = ctrlcaja.abrirCaja(ahora, user);
+                ctrlcaja.insertarDetalle(new DetCaja(monto, "Apertura " + fechaformat.format(ahora), new Caja(keyCajaAper), null, "I"));
                 totalCaja = monto;
                 btnCajaCierre.setEnabled(true);
                 txtCajaMontoCierre.setEnabled(true);
@@ -3748,6 +3930,12 @@ public class Principal extends javax.swing.JFrame {
                 TabContent.setEnabledAt(TabContent.indexOfTab("VENTA"), true);
                 TabContent.setEnabledAt(TabContent.indexOfTab("ALQUILER"), true);
                 lblCajaFechaAper.setText(fechaformat.format(ahora));
+                if (user.getId() < 10) {
+                    lblCajaCodigoVendedor.setText("0" + user.getId());
+                } else {
+                    lblCajaCodigoVendedor.setText(String.valueOf(user.getId()));
+                }
+                lblCajaNomVendedor.setText(user.getNombre());
                 lblCajaFechaCierre.setText("");
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
@@ -3770,7 +3958,7 @@ public class Principal extends javax.swing.JFrame {
         }
         try {
             ctrlcaja.cerrarCaja(ahora);
-            ctrlcaja.insertarDetalle(new DetCaja(monto, "Cierre " + fechaformat.format(ahora), new Caja(keyCajaAper), null));
+            ctrlcaja.insertarDetalle(new DetCaja(monto, "Cierre " + fechaformat.format(ahora), new Caja(keyCajaAper), null, "Ë"));
             btnCajaAbre.setEnabled(true);
             txtCajaMontoAper.setEnabled(true);
             btnCajaCierre.setEnabled(false);
@@ -3779,6 +3967,13 @@ public class Principal extends javax.swing.JFrame {
             lblCajaEstado.setForeground(Color.red);
             TabContent.setEnabledAt(TabContent.indexOfTab("VENTA"), false);
             TabContent.setEnabledAt(TabContent.indexOfTab("ALQUILER"), false);
+            lblCajaFechaCierre.setText(fechaformat.format(ahora));
+            if (user.getId() < 10) {
+                lblCajaCodigoVendedorCierre.setText("0" + user.getId());
+            } else {
+                lblCajaCodigoVendedorCierre.setText(String.valueOf(user.getId()));
+            }
+            lblCajaNomVendedorCierre.setText(user.getNombre());
             lblCajaFechaCierre.setText(fechaformat.format(ahora));
             lblCajaFechaAper.setText("");
         } catch (SQLException ex) {
@@ -3968,7 +4163,9 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnProveedorModificarActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        cumples.toFront();
+        if (cumples != null) {
+            cumples.toFront();
+        }
     }//GEN-LAST:event_formWindowOpened
 
     private void btnVentasBuscarCliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVentasBuscarCliActionPerformed
@@ -3982,11 +4179,10 @@ public class Principal extends javax.swing.JFrame {
                 if (buscado != null) {
                     lblNombreClientellenar.setText(buscado.getApellido() + ", " + buscado.getNombre());
                     lblCodigoClientellenar.setText(String.valueOf(buscado.getIdCliente()));
-                    if(listaClientesCumple.containsKey(buscado.getIdCliente())){
+                    if (listaClientesCumple.containsKey(buscado.getIdCliente())) {
                         lblVentasCumple.setText("Hoy es su cumpleaños");
                         lblVentasCumple.setForeground(Color.blue);
-                    }
-                    else {
+                    } else {
                         lblVentasCumple.setText("");
                     }
                     clienteAlqui = buscado;
@@ -4008,11 +4204,10 @@ public class Principal extends javax.swing.JFrame {
                     lblNombreCliente.setText("Nombre");
                     lblNombreClientellenar.setText(clienteVenta.getApellido() + ", " + clienteVenta.getNombre());
                     lblCodigoClientellenar.setText(String.valueOf(clienteVenta.getIdCliente()));
-                    if(listaClientesCumple.containsKey(clienteVenta.getIdCliente())){
+                    if (listaClientesCumple.containsKey(clienteVenta.getIdCliente())) {
                         lblVentasCumple.setText("Hoy es su cumpleaños");
                         lblVentasCumple.setForeground(Color.blue);
-                    }
-                    else {
+                    } else {
                         lblVentasCumple.setText("");
                     }
                     txtVentasCodigoCli.setText("");
@@ -4033,6 +4228,173 @@ public class Principal extends javax.swing.JFrame {
     private void txtVentasCodigoCliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtVentasCodigoCliActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtVentasCodigoCliActionPerformed
+
+    private void txtCajaMontoCierreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCajaMontoCierreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCajaMontoCierreActionPerformed
+
+    private void btnCajaAnadirIngreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCajaAnadirIngreActionPerformed
+        iddetalle = 0;
+        float aux;
+        if ((float) txtCajaMontoIngr.getValue() == 0 && txtCajaConceptoIngr.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Monto o Concepto vacio", "Complete los campos", JOptionPane.ERROR_MESSAGE);
+        } else {
+            if (isNumeric(String.valueOf(txtCajaMontoIngr.getValue()))) {
+                try {
+                    iddetalle = ctrlcaja.insertarDetalle(new DetCaja((float) txtCajaMontoIngr.getValue(), txtCajaConceptoIngr.getText(), caja, null, "I"));
+                    DefaultTableModel dtm = (DefaultTableModel) tblCajaIngresos.getModel();
+                    dtm.addRow(new Object[]{iddetalle, txtCajaConceptoIngr.getText(), txtCajaMontoIngr.getValue()});
+                    listaingregre.put(iddetalle, new DetCaja((float) txtCajaMontoIngr.getValue(), txtCajaConceptoIngr.getText(), caja, null, "I"));
+                    txtCajaMontoIngr.setValue(0);
+                    txtCajaConceptoIngr.setText("");
+                    aux = Float.valueOf(txtCajaTotalIngre.getText());
+                    aux += (Float) txtCajaMontoIngr.getValue();
+                    txtCajaTotalIngre.setText(String.valueOf(aux));
+                    iddetalle = 0;
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Ingrese solo valores numericos", "Datos invalidos", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btnCajaAnadirIngreActionPerformed
+
+    private void btnCajaModificarIngreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCajaModificarIngreActionPerformed
+        float aux;
+        float valorAmodificar;
+        if ((float) txtCajaMontoIngr.getValue() == 0 && txtCajaConceptoIngr.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Monto o Concepto vacio", "Complete los campos", JOptionPane.ERROR_MESSAGE);
+        } else {
+            if (isNumeric(String.valueOf(txtCajaMontoIngr.getValue()))) {
+                if (filaSeleccionadaInreso != 0) {
+                    try {
+                        ctrlcaja.modificaDetalle(new DetCaja(iddetalle, (float) txtCajaMontoIngr.getValue(), txtCajaConceptoIngr.getText()));
+                        ((DetCaja) listaingregre.get(iddetalle)).setConcepto(txtCajaConceptoIngr.getText());
+                        ((DetCaja) listaingregre.get(iddetalle)).setMonto((float) txtCajaMontoIngr.getValue());
+                        DefaultTableModel dtm = (DefaultTableModel) tblCajaIngresos.getModel();
+                        dtm.removeRow(filaSeleccionadaInreso);
+                        dtm.addRow(new Object[]{iddetalle, txtCajaConceptoIngr.getText(), (float) txtCajaMontoIngr.getValue()});
+                        txtCajaConceptoIngr.setText("");
+                        txtCajaMontoIngr.setValue(0);
+                        aux = Float.valueOf(txtCajaTotalIngre.getText());
+                        valorAmodificar = (float)txtCajaMontoIngr.getValue();
+                        if(valorAnteriorIngre > valorAmodificar){
+                            aux = aux + valorAnteriorIngre - valorAmodificar;
+                            txtCajaTotalIngre.setText(String.valueOf(aux));
+                        } else if(valorAnteriorIngre < valorAmodificar) {
+                            aux = aux + valorAmodificar - valorAnteriorIngre;
+                            txtCajaTotalIngre.setText(String.valueOf(aux));
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Sin cambios", "Atencion", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                        iddetalle = 0;
+                    } catch (SQLException ex) {
+                        JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Seleccione un Ingreso de la tabla", "sin detalle", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Ingrese solo valores numericos", "Datos invalidos", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btnCajaModificarIngreActionPerformed
+
+    private void btnCajaEliminarIngreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCajaEliminarIngreActionPerformed
+        float aux;
+        if (filaSeleccionadaInreso != 0) {
+            try {
+                ctrlcaja.eliminarDetalle(iddetalle);
+                aux = (Float) txtCajaMontoIngr.getValue();
+                aux -= (float) ((DetCaja) listaingregre.get(iddetalle)).getMonto();
+                txtCajaTotalIngre.setText(String.valueOf(aux));
+                listaingregre.remove(iddetalle);
+                DefaultTableModel dtm = (DefaultTableModel) tblCajaIngresos.getModel();
+                dtm.removeRow(filaSeleccionadaInreso);
+                txtCajaConceptoIngr.setText("");
+                txtCajaMontoIngr.setValue(0);
+                iddetalle = 0;
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Seleccione un Ingreso de la tabla", "sin detalle", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnCajaEliminarIngreActionPerformed
+
+    private void btnCajaanadirEgreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCajaanadirEgreActionPerformed
+        iddetalle = 0;
+        if ((float) txtCajaMontoEgre.getValue() == 0 && txtCajaConceptoEgre.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Monto o Concepto vacio", "Complete los campos", JOptionPane.ERROR_MESSAGE);
+        } else {
+            if (isNumeric(String.valueOf(txtCajaMontoEgre.getValue()))) {
+                try {
+                    iddetalle = ctrlcaja.insertarDetalle(new DetCaja((float) txtCajaMontoEgre.getValue(), txtCajaConceptoEgre.getText(), caja, null, "E"));
+                    DefaultTableModel dtm = (DefaultTableModel) tblCajaEgresos.getModel();
+                    dtm.addRow(new Object[]{iddetalle, txtCajaConceptoEgre.getText(), txtCajaMontoEgre.getValue()});
+                    listaingregre.put(iddetalle, new DetCaja((float) txtCajaMontoEgre.getValue(), txtCajaConceptoEgre.getText(), caja, null, "E"));
+                    txtCajaMontoEgre.setValue(0);
+                    txtCajaConceptoEgre.setText("");
+                    iddetalle = 0;
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Ingrese solo valores numericos", "Datos invalidos", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btnCajaanadirEgreActionPerformed
+
+    private void btnCajaModificarEgreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCajaModificarEgreActionPerformed
+        if ((float) txtCajaMontoEgre.getValue() == 0 && txtCajaConceptoEgre.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Monto o Concepto vacio", "Complete los campos", JOptionPane.ERROR_MESSAGE);
+        } else {
+            if (isNumeric(String.valueOf(txtCajaMontoEgre.getValue()))) {
+                if (filaSeleccionadaEgreso != 0) {
+                    try {
+                        ctrlcaja.modificaDetalle(new DetCaja(iddetalle, (float) txtCajaMontoEgre.getValue(), txtCajaConceptoEgre.getText()));
+                        ((DetCaja) listaingregre.get(iddetalle)).setConcepto(txtCajaConceptoEgre.getText());
+                        ((DetCaja) listaingregre.get(iddetalle)).setMonto((float) txtCajaMontoEgre.getValue());
+                        DefaultTableModel dtm = (DefaultTableModel) tblCajaEgresos.getModel();
+                        dtm.removeRow(filaSeleccionadaEgreso);
+                        dtm.addRow(new Object[]{iddetalle, txtCajaConceptoEgre.getText(), (float) txtCajaMontoEgre.getValue()});
+                        txtCajaConceptoEgre.setText("");
+                        txtCajaMontoEgre.setValue(0);
+                        iddetalle = 0;
+                    } catch (SQLException ex) {
+                        JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Seleccione un Ingreso de la tabla", "sin detalle", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Ingrese solo valores numericos", "Datos invalidos", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btnCajaModificarEgreActionPerformed
+
+    private void btnCajaEliminarEgreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCajaEliminarEgreActionPerformed
+        float aux;
+        if (filaSeleccionadaEgreso != 0) {
+            try {
+                ctrlcaja.eliminarDetalle(iddetalle);
+                aux = (float) txtCajaMontoEgre.getValue();
+                aux -= (float) ((DetCaja) listaingregre.get(iddetalle)).getMonto();
+                txtCajaTotalIngre.setText(String.valueOf(aux));
+                listaingregre.remove(iddetalle);
+                DefaultTableModel dtm = (DefaultTableModel) tblCajaEgresos.getModel();
+                dtm.removeRow(filaSeleccionadaEgreso);
+                txtCajaConceptoEgre.setText("");
+                txtCajaMontoEgre.setValue(0);
+                iddetalle = 0;
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Seleccione un Ingreso de la tabla", "sin detalle", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnCajaEliminarEgreActionPerformed
 
     private void actualizaPrecioAlqui() {
         java.util.Date date = new java.util.Date();
@@ -4278,6 +4640,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JCheckBox chkUsuariosAdmin;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel100;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -4289,6 +4652,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
@@ -4370,7 +4734,9 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel93;
     private javax.swing.JLabel jLabel94;
     private javax.swing.JLabel jLabel95;
+    private javax.swing.JLabel jLabel96;
     private javax.swing.JLabel jLabel97;
+    private javax.swing.JLabel jLabel98;
     private javax.swing.JLabel jLabel99;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -4511,8 +4877,12 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTextField txtAlquilerVendedor;
     private javax.swing.JTextField txtArticulosBuscar;
     private javax.swing.JTextArea txtArticulosDescripcion;
+    private javax.swing.JTextField txtCajaConceptoEgre;
+    private javax.swing.JTextField txtCajaConceptoIngr;
     private javax.swing.JTextField txtCajaMontoAper;
     private javax.swing.JTextField txtCajaMontoCierre;
+    private javax.swing.JSpinner txtCajaMontoEgre;
+    private javax.swing.JSpinner txtCajaMontoIngr;
     private javax.swing.JTextField txtCajaRetiro;
     private javax.swing.JTextField txtCajaTotalEgre;
     private javax.swing.JTextField txtCajaTotalIngre;

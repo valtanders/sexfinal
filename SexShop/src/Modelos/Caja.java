@@ -16,6 +16,7 @@ public class Caja {
     private Date fechaAper;
     private Date fechaCierre;
     private boolean abierta;
+    private Usuario usuario;
     
     public Caja () {}
     
@@ -23,11 +24,12 @@ public class Caja {
         this.idCaja = id;
     }
     
-    public Caja (int id, Date fechaA, Date fechaC, boolean abierta) {
+    public Caja (int id, Date fechaA, Date fechaC, boolean abierta, Usuario usuario) {
         this.idCaja = id;
         this.fechaAper = fechaA;
         this.fechaCierre = fechaC;
         this.abierta = abierta;
+        this.usuario = usuario;
     }
 
     /**
@@ -77,6 +79,20 @@ public class Caja {
      */
     public void setAbierta(boolean abierta) {
         this.abierta = abierta;
+    }
+
+    /**
+     * @return the usuario
+     */
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    /**
+     * @param usuario the usuario to set
+     */
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }
 

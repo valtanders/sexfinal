@@ -68,7 +68,7 @@ public class CumplesF extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblCumples = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
