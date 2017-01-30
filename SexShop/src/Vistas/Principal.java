@@ -140,8 +140,8 @@ public class Principal extends javax.swing.JFrame {
         totalVentas = 0;
         totalAlquiler = 0;
         iddetalle = 0;
-        valorAnteriorIngre =0;
-        valorAnteriorEgre =0;
+        valorAnteriorIngre = 0;
+        valorAnteriorEgre = 0;
         listaDetalleVenta = new ArrayList();
         listaDetalleAlqui = new ArrayList();
         clienteVenta = null;
@@ -2188,10 +2188,10 @@ public class Principal extends javax.swing.JFrame {
         jLabel100.setText("Concepto:");
 
         txtCajaMontoIngr.setModel(new javax.swing.SpinnerNumberModel(0.0f, null, null, 1.0f));
-        txtCajaMontoIngr.setEditor(new javax.swing.JSpinner.NumberEditor(txtCajaMontoIngr, ""));
+        txtCajaMontoIngr.setEditor(new javax.swing.JSpinner.NumberEditor(txtCajaMontoIngr, "0.00"));
 
         txtCajaMontoEgre.setModel(new javax.swing.SpinnerNumberModel(0.0f, null, null, 1.0f));
-        txtCajaMontoEgre.setEditor(new javax.swing.JSpinner.NumberEditor(txtCajaMontoEgre, ""));
+        txtCajaMontoEgre.setEditor(new javax.swing.JSpinner.NumberEditor(txtCajaMontoEgre, "0.00"));
 
         javax.swing.GroupLayout tabCajaLayout = new javax.swing.GroupLayout(tabCaja);
         tabCaja.setLayout(tabCajaLayout);
@@ -4245,11 +4245,11 @@ public class Principal extends javax.swing.JFrame {
                     DefaultTableModel dtm = (DefaultTableModel) tblCajaIngresos.getModel();
                     dtm.addRow(new Object[]{iddetalle, txtCajaConceptoIngr.getText(), txtCajaMontoIngr.getValue()});
                     listaingregre.put(iddetalle, new DetCaja((float) txtCajaMontoIngr.getValue(), txtCajaConceptoIngr.getText(), caja, null, "I"));
-                    txtCajaMontoIngr.setValue(0);
-                    txtCajaConceptoIngr.setText("");
                     aux = Float.valueOf(txtCajaTotalIngre.getText());
                     aux += (Float) txtCajaMontoIngr.getValue();
                     txtCajaTotalIngre.setText(String.valueOf(aux));
+                    txtCajaMontoIngr.setValue(0);
+                    txtCajaConceptoIngr.setText("");
                     iddetalle = 0;
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
@@ -4267,7 +4267,7 @@ public class Principal extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Monto o Concepto vacio", "Complete los campos", JOptionPane.ERROR_MESSAGE);
         } else {
             if (isNumeric(String.valueOf(txtCajaMontoIngr.getValue()))) {
-                if (filaSeleccionadaInreso != 0) {
+                if (filaSeleccionadaInreso >= 0) {
                     try {
                         ctrlcaja.modificaDetalle(new DetCaja(iddetalle, (float) txtCajaMontoIngr.getValue(), txtCajaConceptoIngr.getText()));
                         ((DetCaja) listaingregre.get(iddetalle)).setConcepto(txtCajaConceptoIngr.getText());
@@ -4275,20 +4275,17 @@ public class Principal extends javax.swing.JFrame {
                         DefaultTableModel dtm = (DefaultTableModel) tblCajaIngresos.getModel();
                         dtm.removeRow(filaSeleccionadaInreso);
                         dtm.addRow(new Object[]{iddetalle, txtCajaConceptoIngr.getText(), (float) txtCajaMontoIngr.getValue()});
-                        txtCajaConceptoIngr.setText("");
-                        txtCajaMontoIngr.setValue(0);
                         aux = Float.valueOf(txtCajaTotalIngre.getText());
-                        valorAmodificar = (float)txtCajaMontoIngr.getValue();
-                        if(valorAnteriorIngre > valorAmodificar){
-                            aux = aux + valorAnteriorIngre - valorAmodificar;
-                            txtCajaTotalIngre.setText(String.valueOf(aux));
-                        } else if(valorAnteriorIngre < valorAmodificar) {
-                            aux = aux + valorAmodificar - valorAnteriorIngre;
+                        valorAmodificar = (float) txtCajaMontoIngr.getValue();
+                        if (valorAmodificar != valorAnteriorIngre) {
+                            aux = aux - valorAnteriorIngre + valorAmodificar;
                             txtCajaTotalIngre.setText(String.valueOf(aux));
                         } else {
                             JOptionPane.showMessageDialog(null, "Sin cambios", "Atencion", JOptionPane.INFORMATION_MESSAGE);
                         }
                         iddetalle = 0;
+                        txtCajaConceptoIngr.setText("");
+                        txtCajaMontoIngr.setValue(0);
                     } catch (SQLException ex) {
                         JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
                     }
@@ -4303,10 +4300,10 @@ public class Principal extends javax.swing.JFrame {
 
     private void btnCajaEliminarIngreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCajaEliminarIngreActionPerformed
         float aux;
-        if (filaSeleccionadaInreso != 0) {
+        if (filaSeleccionadaInreso >= 0) {
             try {
                 ctrlcaja.eliminarDetalle(iddetalle);
-                aux = (Float) txtCajaMontoIngr.getValue();
+                aux = Float.valueOf(txtCajaTotalIngre.getText());
                 aux -= (float) ((DetCaja) listaingregre.get(iddetalle)).getMonto();
                 txtCajaTotalIngre.setText(String.valueOf(aux));
                 listaingregre.remove(iddetalle);
@@ -4324,6 +4321,7 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCajaEliminarIngreActionPerformed
 
     private void btnCajaanadirEgreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCajaanadirEgreActionPerformed
+        float aux;
         iddetalle = 0;
         if ((float) txtCajaMontoEgre.getValue() == 0 && txtCajaConceptoEgre.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "Monto o Concepto vacio", "Complete los campos", JOptionPane.ERROR_MESSAGE);
@@ -4334,6 +4332,9 @@ public class Principal extends javax.swing.JFrame {
                     DefaultTableModel dtm = (DefaultTableModel) tblCajaEgresos.getModel();
                     dtm.addRow(new Object[]{iddetalle, txtCajaConceptoEgre.getText(), txtCajaMontoEgre.getValue()});
                     listaingregre.put(iddetalle, new DetCaja((float) txtCajaMontoEgre.getValue(), txtCajaConceptoEgre.getText(), caja, null, "E"));
+                    aux = Float.valueOf(txtCajaTotalEgre.getText());
+                    aux += (Float) txtCajaMontoEgre.getValue();
+                    txtCajaTotalEgre.setText(String.valueOf(aux));
                     txtCajaMontoEgre.setValue(0);
                     txtCajaConceptoEgre.setText("");
                     iddetalle = 0;
@@ -4347,11 +4348,13 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCajaanadirEgreActionPerformed
 
     private void btnCajaModificarEgreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCajaModificarEgreActionPerformed
+        float aux=0;
+        float valorAmodificar;
         if ((float) txtCajaMontoEgre.getValue() == 0 && txtCajaConceptoEgre.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "Monto o Concepto vacio", "Complete los campos", JOptionPane.ERROR_MESSAGE);
         } else {
             if (isNumeric(String.valueOf(txtCajaMontoEgre.getValue()))) {
-                if (filaSeleccionadaEgreso != 0) {
+                if (filaSeleccionadaEgreso >= 0) {
                     try {
                         ctrlcaja.modificaDetalle(new DetCaja(iddetalle, (float) txtCajaMontoEgre.getValue(), txtCajaConceptoEgre.getText()));
                         ((DetCaja) listaingregre.get(iddetalle)).setConcepto(txtCajaConceptoEgre.getText());
@@ -4359,6 +4362,14 @@ public class Principal extends javax.swing.JFrame {
                         DefaultTableModel dtm = (DefaultTableModel) tblCajaEgresos.getModel();
                         dtm.removeRow(filaSeleccionadaEgreso);
                         dtm.addRow(new Object[]{iddetalle, txtCajaConceptoEgre.getText(), (float) txtCajaMontoEgre.getValue()});
+                        aux = Float.valueOf(txtCajaTotalEgre.getText());
+                        valorAmodificar = (float) txtCajaMontoEgre.getValue();
+                        if (valorAnteriorEgre != valorAmodificar) {
+                            aux = aux - valorAnteriorEgre + valorAmodificar;
+                            txtCajaTotalEgre.setText(String.valueOf(aux));
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Sin cambios", "Atencion", JOptionPane.INFORMATION_MESSAGE);
+                        }
                         txtCajaConceptoEgre.setText("");
                         txtCajaMontoEgre.setValue(0);
                         iddetalle = 0;
@@ -4376,12 +4387,12 @@ public class Principal extends javax.swing.JFrame {
 
     private void btnCajaEliminarEgreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCajaEliminarEgreActionPerformed
         float aux;
-        if (filaSeleccionadaEgreso != 0) {
+        if (filaSeleccionadaEgreso >= 0) {
             try {
                 ctrlcaja.eliminarDetalle(iddetalle);
-                aux = (float) txtCajaMontoEgre.getValue();
+                aux = Float.valueOf(txtCajaTotalIngre.getText());
                 aux -= (float) ((DetCaja) listaingregre.get(iddetalle)).getMonto();
-                txtCajaTotalIngre.setText(String.valueOf(aux));
+                txtCajaTotalEgre.setText(String.valueOf(aux));
                 listaingregre.remove(iddetalle);
                 DefaultTableModel dtm = (DefaultTableModel) tblCajaEgresos.getModel();
                 dtm.removeRow(filaSeleccionadaEgreso);
