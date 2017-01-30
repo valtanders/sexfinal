@@ -36,6 +36,17 @@ public class Articulo {
         this.estado = estado;
     }
     
+    public Articulo (int id, String descripcion, float costo, float precio, int cantidad, Date fechacompra, Proveedor proveedor, Estado estado) {
+        this.id = id;
+        this.descripcion = descripcion;
+        this.costo = costo;
+        this.precio = precio;
+        this.cantidad = cantidad;
+        this.fechaCompra = fechacompra;
+        this.proveedor = proveedor;
+        this.estado = estado;
+    }
+    
     public Articulo (int id, String descripcion, float costo, float precio, int cantidad, Proveedor proveedor, Estado estado) {
         this.id = id;
         this.descripcion = descripcion;

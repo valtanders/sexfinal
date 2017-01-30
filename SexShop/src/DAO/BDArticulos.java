@@ -36,7 +36,7 @@ public class BDArticulos implements Interfaz {
         oCon.getConexion();
         int llave = 0;
         String insert = "insert into articulos (descripccion, costo, precio, cantidad, fechaCompra, fk_idProveedores, fk_idCategorias, fk_idEstados)\n" +
-        "values (?,?,?,?,?,?,?)";
+        "values (?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert, PreparedStatement.RETURN_GENERATED_KEYS);
             sentencia.setString(1, articulo.getDescripcion());

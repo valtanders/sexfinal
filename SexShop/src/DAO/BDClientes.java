@@ -32,7 +32,7 @@ public class BDClientes implements Interfaz{
         Conexion oCon = new Conexion();
         oCon.getConexion();
         int llave = 0;
-        String insert = "INSERT INTO cliente (fk_idDescuentoCli,notas,nombre,apellido,direccion,mail,telefono,dni,fechanac,codigoCliente,fk_idEstados) Values (?,?,?,?,?,?,?,?,?,?,?)";
+        String insert = "INSERT INTO cliente (fk_idDescuentoCli,notas,nombre,apellido,direccion,mail,telefono,dni,fechanac,fk_idEstados) Values (?,?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert, PreparedStatement.RETURN_GENERATED_KEYS);
             sentencia.setInt(1, cliente.getDescuento().getIdDescuentoCli());
@@ -44,8 +44,7 @@ public class BDClientes implements Interfaz{
             sentencia.setString(7, cliente.getTelefono());
             sentencia.setInt(8,cliente.getDni());
             sentencia.setDate(9, cliente.getFechanac());
-            sentencia.setString(10, cliente.getCodigo());
-            sentencia.setInt(11,cliente.getEstado().getId());
+            sentencia.setInt(10,cliente.getEstado().getId());
             sentencia.execute();
             ResultSet rs = sentencia.getGeneratedKeys();
             if (rs != null && rs.next()) {
@@ -112,7 +111,7 @@ public class BDClientes implements Interfaz{
         ResultSet rs = null;
         ConcurrentHashMap resp = new ConcurrentHashMap<String, String>();
         oCon.getConexion();
-        String insert = "SELECT C.idcliente,C.notas,C.nombre,C.apellido,C.direccion,C.mail,C.telefono,C.dni,C.fechanac,C.codigoCliente, DC.idDescuentoCli, DC.descripcion, DC.porcentaje, DC.importe,E.idEstados,E.Descripcion  FROM cliente C INNER JOIN descuentocli DC ON idDescuentoCli = C.fk_idDescuentoCli INNER JOIN estados E on idEstados = C.fk_idEstados where C.fk_idEstados <> 3";
+        String insert = "SELECT C.idcliente,C.notas,C.nombre,C.apellido,C.direccion,C.mail,C.telefono,C.dni,C.fechanac, DC.idDescuentoCli, DC.descripcion, DC.porcentaje, DC.importe,E.idEstados,E.Descripcion  FROM cliente C INNER JOIN descuentocli DC ON idDescuentoCli = C.fk_idDescuentoCli INNER JOIN estados E on idEstados = C.fk_idEstados where C.fk_idEstados <> 3";
         try {
             PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert);
             rs = sentencia.executeQuery();
@@ -121,9 +120,9 @@ public class BDClientes implements Interfaz{
             DescuentoCli desc;
             Estado est;
             while (rs.next()) {
-                est = new Estado(rs.getInt(15),rs.getString(16));
-                desc = new DescuentoCli(rs.getInt(11), rs.getString(12), rs.getInt(13), rs.getFloat(14));
-                cliente = new Cliente(rs.getInt(1), desc, rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getDate(9),rs.getString(10),est);
+                est = new Estado(rs.getInt(14),rs.getString(15));
+                desc = new DescuentoCli(rs.getInt(10), rs.getString(11), rs.getInt(12), rs.getFloat(13));
+                cliente = new Cliente(rs.getInt(1), desc, rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getDate(9),est);
                 resp.put(cliente.getIdCliente(), cliente);
             }
             rs.close();
@@ -159,30 +158,7 @@ public class BDClientes implements Interfaz{
         }
     
     }
-    
-    public boolean BuscaCodigo(String cod) throws SQLException {
-        Conexion oCon = new Conexion();
-        ResultSet rs = null;
-        String codigo = "";
-        boolean codrepetido = false;
-        oCon.getConexion();
-        String select = "Select codigoCliente from cliente where codigoCliente = ?";
-        try {
-            PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(select);
-            sentencia.setString(1, cod);
-            rs = sentencia.executeQuery();
-            while (rs.next()) {
-                codigo = rs.getString(1);
-            }
-            if (!codigo.equals(""))
-                codrepetido = true;
-        } catch (SQLException e) {
-            e.printStackTrace();            
-        } finally {
-            oCon.close();
-            return codrepetido;
-        }
-    }
+   
     
     public Cliente traeclienteporid(int id) throws SQLException{
         Conexion oCon = new Conexion();
@@ -191,15 +167,15 @@ public class BDClientes implements Interfaz{
         Estado est = null;
         DescuentoCli desc = null;
         oCon.getConexion();
-        String select = "SELECT C.idcliente,C.notas,C.nombre,C.apellido,C.direccion,C.mail,C.telefono,C.dni,C.fechanac,C.codigoCliente, DC.idDescuentoCli, DC.descripcion, DC.porcentaje, DC.importe,E.idEstados,E.Descripcion  FROM cliente C INNER JOIN descuentocli DC ON idDescuentoCli = C.fk_idDescuentoCli INNER JOIN estados E on idEstados = C.fk_idEstados where C.idcliente = ?";
+        String select = "SELECT C.idcliente,C.notas,C.nombre,C.apellido,C.direccion,C.mail,C.telefono,C.dni,C.fechanac, DC.idDescuentoCli, DC.descripcion, DC.porcentaje, DC.importe,E.idEstados,E.Descripcion  FROM cliente C INNER JOIN descuentocli DC ON idDescuentoCli = C.fk_idDescuentoCli INNER JOIN estados E on idEstados = C.fk_idEstados where C.idcliente = ?";
         try {
             PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(select);
             sentencia.setInt(1, id);
             rs = sentencia.executeQuery();
             while (rs.next()) {
-                est = new Estado(rs.getInt(15),rs.getString(16));
-                desc = new DescuentoCli(rs.getInt(11), rs.getString(12), rs.getInt(13), rs.getFloat(14));
-                cliente = new Cliente(rs.getInt(1), desc, rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getDate(9),rs.getString(10),est);
+                est = new Estado(rs.getInt(14),rs.getString(15));
+                desc = new DescuentoCli(rs.getInt(10), rs.getString(11), rs.getInt(12), rs.getFloat(13));
+                cliente = new Cliente(rs.getInt(1), desc, rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getDate(9),est);
             }
             rs.close();
             sentencia.close();
@@ -260,7 +236,7 @@ public class BDClientes implements Interfaz{
         ResultSet rs = null;
         ConcurrentHashMap resp = new ConcurrentHashMap<String, String>();
         oCon.getConexion();
-        String insert = "SELECT C.idcliente,C.notas,C.nombre,C.apellido,C.direccion,C.mail,C.telefono,C.dni,C.fechanac,C.codigoCliente, DC.idDescuentoCli, DC.descripcion, DC.porcentaje, DC.importe,E.idEstados,E.Descripcion  FROM cliente C \n" +
+        String insert = "SELECT C.idcliente,C.notas,C.nombre,C.apellido,C.direccion,C.mail,C.telefono,C.dni,C.fechanac, DC.idDescuentoCli, DC.descripcion, DC.porcentaje, DC.importe,E.idEstados,E.Descripcion  FROM cliente C \n" +
                         "INNER JOIN descuentocli DC ON idDescuentoCli = C.fk_idDescuentoCli \n" +
                         "INNER JOIN estados E on idEstados = C.fk_idEstados \n" +
                         "where C.fk_idEstados <> 3 and month(fechanac) = month(curdate()) and day(fechanac) = day(curdate())";
@@ -272,9 +248,9 @@ public class BDClientes implements Interfaz{
             DescuentoCli desc;
             Estado est;
             while (rs.next()) {
-                est = new Estado(rs.getInt(15),rs.getString(16));
-                desc = new DescuentoCli(rs.getInt(11), rs.getString(12), rs.getInt(13), rs.getFloat(14));
-                cliente = new Cliente(rs.getInt(1), desc, rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getDate(9),rs.getString(10),est);
+                est = new Estado(rs.getInt(14),rs.getString(15));
+                desc = new DescuentoCli(rs.getInt(10), rs.getString(11), rs.getInt(12), rs.getFloat(13));
+                cliente = new Cliente(rs.getInt(1), desc, rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getDate(9),est);
                 resp.put(cliente.getIdCliente(), cliente);
             }
             rs.close();

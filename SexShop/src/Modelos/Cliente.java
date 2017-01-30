@@ -22,41 +22,11 @@ public class Cliente {
     private String telefono;
     private int dni;
     private Date fechanac;
-    private String codigo;
     private Estado estado;
     
     public Cliente() {};
     
-    public Cliente(int id, DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha,String cod,Estado est) {
-        this.idCliente = id;
-        this.descuento = desccli;
-        this.notas = notas;
-        this.nombre = nom;
-        this.apellido = ape;
-        this.direccion = direc;
-        this.mail = mail;
-        this.telefono = tel;
-        this.dni = dni;
-        this.fechanac = fecha;
-        this.codigo = cod;
-        this.estado = est;
-    };
-    
-    public Cliente(DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha,String cod,Estado est) {
-        this.descuento = desccli;
-        this.notas = notas;
-        this.nombre = nom;
-        this.apellido = ape;
-        this.direccion = direc;
-        this.mail = mail;
-        this.telefono = tel;
-        this.dni = dni;
-        this.fechanac = fecha;
-        this.codigo = cod;
-        this.estado = est;
-    };
-    
-    public Cliente(int id,DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha,Estado est) {
+    public Cliente(int id, DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha,Estado est) {
         this.idCliente = id;
         this.descuento = desccli;
         this.notas = notas;
@@ -69,6 +39,20 @@ public class Cliente {
         this.fechanac = fecha;
         this.estado = est;
     };
+    
+    public Cliente(DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha,Estado est) {
+        this.descuento = desccli;
+        this.notas = notas;
+        this.nombre = nom;
+        this.apellido = ape;
+        this.direccion = direc;
+        this.mail = mail;
+        this.telefono = tel;
+        this.dni = dni;
+        this.fechanac = fecha;
+        this.estado = est;
+    };
+    
 
     /**
      * @return the idCliente
@@ -217,19 +201,6 @@ public class Cliente {
         this.estado = estado;
     }
 
-    /**
-     * @return the codigo
-     */
-    public String getCodigo() {
-        return codigo;
-    }
-
-    /**
-     * @param codigo the codigo to set
-     */
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
     
     
 }
