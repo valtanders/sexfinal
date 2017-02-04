@@ -21,11 +21,11 @@ public class ctrlABMClientes {
     BDClientes bdclientes = BDClientes.getIntance();
     
     
-    public int AgregarCliente(int desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni,Date fecha, int est) throws SQLException{
+    public int AgregarCliente(int desccli, String notas, String nom, String ape, String direc, String mail, String tel, String dni,Date fecha, int est) throws SQLException{
          return bdclientes.agregar(new Cliente(new DescuentoCli(desccli), notas, nom, ape, direc, mail, tel , dni, fecha,new Estado(est)));
     }
     
-    public Cliente ModificarCliente(int id,DescuentoCli descli,String notas,String nom,String ape,String dire,String email,String telefono,int dni,Date fechanac ,Estado est) throws SQLException{
+    public Cliente ModificarCliente(int id,DescuentoCli descli,String notas,String nom,String ape,String dire,String email,String telefono,String dni,Date fechanac ,Estado est) throws SQLException{
         return bdclientes.modificar(new Cliente(id,descli,notas,nom,ape,dire,email,telefono,dni, fechanac,est));
     }
     

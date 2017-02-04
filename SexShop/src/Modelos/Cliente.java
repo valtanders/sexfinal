@@ -20,13 +20,13 @@ public class Cliente {
     private String direccion;
     private String mail;
     private String telefono;
-    private int dni;
+    private String dni;
     private Date fechanac;
     private Estado estado;
     
     public Cliente() {};
     
-    public Cliente(int id, DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha,Estado est) {
+    public Cliente(int id, DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, String dni, Date fecha,Estado est) {
         this.idCliente = id;
         this.descuento = desccli;
         this.notas = notas;
@@ -40,7 +40,7 @@ public class Cliente {
         this.estado = est;
     };
     
-    public Cliente(DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, int dni, Date fecha,Estado est) {
+    public Cliente(DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, String dni, Date fecha,Estado est) {
         this.descuento = desccli;
         this.notas = notas;
         this.nombre = nom;
@@ -148,14 +148,14 @@ public class Cliente {
     /**
      * @return the dni
      */
-    public int getDni() {
+    public String getDni() {
         return dni;
     }
 
     /**
      * @param dni the dni to set
      */
-    public void setDni(int dni) {
+    public void setDni(String dni) {
         this.dni = dni;
     }
 

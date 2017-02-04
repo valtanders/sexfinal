@@ -42,7 +42,7 @@ public class BDClientes implements Interfaz{
             sentencia.setString(5, cliente.getDireccion());
             sentencia.setString(6, cliente.getMail());
             sentencia.setString(7, cliente.getTelefono());
-            sentencia.setInt(8,cliente.getDni());
+            sentencia.setString(8,cliente.getDni());
             sentencia.setDate(9, cliente.getFechanac());
             sentencia.setInt(10,cliente.getEstado().getId());
             sentencia.execute();
@@ -74,7 +74,7 @@ public class BDClientes implements Interfaz{
             sentencia.setString(5, cliente.getDireccion());
             sentencia.setString(6, cliente.getMail());
             sentencia.setString(7, cliente.getTelefono());
-            sentencia.setInt(8,cliente.getDni());
+            sentencia.setString(8,cliente.getDni());
             sentencia.setDate(9, cliente.getFechanac());
             sentencia.setInt(10,cliente.getEstado().getId());
             sentencia.setInt(11,cliente.getIdCliente());
@@ -122,7 +122,8 @@ public class BDClientes implements Interfaz{
             while (rs.next()) {
                 est = new Estado(rs.getInt(14),rs.getString(15));
                 desc = new DescuentoCli(rs.getInt(10), rs.getString(11), rs.getInt(12), rs.getFloat(13));
-                cliente = new Cliente(rs.getInt(1), desc, rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getDate(9),est);
+                desc = null;
+                cliente = new Cliente(rs.getInt(1), desc, rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDate(9),est);
                 resp.put(cliente.getIdCliente(), cliente);
             }
             rs.close();
@@ -175,7 +176,7 @@ public class BDClientes implements Interfaz{
             while (rs.next()) {
                 est = new Estado(rs.getInt(14),rs.getString(15));
                 desc = new DescuentoCli(rs.getInt(10), rs.getString(11), rs.getInt(12), rs.getFloat(13));
-                cliente = new Cliente(rs.getInt(1), desc, rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getDate(9),est);
+                cliente = new Cliente(rs.getInt(1), desc, rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDate(9),est);
             }
             rs.close();
             sentencia.close();
@@ -250,7 +251,7 @@ public class BDClientes implements Interfaz{
             while (rs.next()) {
                 est = new Estado(rs.getInt(14),rs.getString(15));
                 desc = new DescuentoCli(rs.getInt(10), rs.getString(11), rs.getInt(12), rs.getFloat(13));
-                cliente = new Cliente(rs.getInt(1), desc, rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getInt(8), rs.getDate(9),est);
+                cliente = new Cliente(rs.getInt(1), desc, rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getString(8), rs.getDate(9),est);
                 resp.put(cliente.getIdCliente(), cliente);
             }
             rs.close();

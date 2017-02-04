@@ -297,7 +297,7 @@ public class ModificaCliente extends javax.swing.JDialog {
             desc = "inactivo";
         }
         try {
-            this.setModificado(ctrlclientes.ModificarCliente(idcliente,(DescuentoCli)lista.get(cbxModClienteDescuento.getSelectedIndex()+1),txtModClienteNotas.getText(),txtModClienteNombre.getText(),txtModClienteApellido.getText(),txtModClienteDieccion.getText(),txtModClienteEmail.getText(),txtModClienteTelefono.getText(),Integer.valueOf(txtModClienteDNI.getText()),sqlDate,new Estado(estado,desc)));
+            this.setModificado(ctrlclientes.ModificarCliente(idcliente,(DescuentoCli)lista.get(cbxModClienteDescuento.getSelectedIndex()+1),txtModClienteNotas.getText(),txtModClienteNombre.getText(),txtModClienteApellido.getText(),txtModClienteDieccion.getText(),txtModClienteEmail.getText(),txtModClienteTelefono.getText(),txtModClienteDNI.getText(),sqlDate,new Estado(estado,desc)));
             this.dispose();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);

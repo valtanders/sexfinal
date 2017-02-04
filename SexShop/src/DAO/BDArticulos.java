@@ -113,7 +113,7 @@ public class BDArticulos implements Interfaz {
         ConcurrentHashMap resp = new ConcurrentHashMap<String, String>();
         oCon.getConexion();
         String insert = "select A.idArticulos, A.descripccion, A.costo, A.precio, A.cantidad, A.fechaCompra, A.fk_idProveedores, A.fk_idCategorias, A.fk_idEstados, P.razonsocial, P.direccion, P.telefono, P.mail, P.fk_idEstados, C.descripcion, E.Descripcion from articulos A\n" +
-            "inner join proveedores P on P.idproveedores = A.fk_idproveedores\n" +
+            "left join proveedores P on P.idproveedores = A.fk_idproveedores\n" +
             "inner join categorias C on C.idcategorias = A.fk_idcategorias\n" +
             "inner join Estados E on E.idestados = A.fk_idestados\n" +
             "where A.fk_idEstados <> 3";
@@ -123,13 +123,14 @@ public class BDArticulos implements Interfaz {
             rs = sentencia.executeQuery();
 
             Articulo articulo;
-            Proveedor proveedor;
+            Proveedor proveedor = null;
             Categoria categoria;
             Estado est;
             while (rs.next()) {
                 est = new Estado(rs.getInt(9),rs.getString(16));
                 categoria = new Categoria(rs.getInt(8),rs.getString(15));
-                proveedor = new Proveedor(rs.getInt(7), rs.getString(10),rs.getString(11), rs.getString(12),rs.getString(13),new Estado());
+                if (rs.getString(10) != null)
+                    proveedor = new Proveedor(rs.getInt(7), rs.getString(10),rs.getString(11), rs.getString(12),rs.getString(13),new Estado());
                 articulo = new Articulo(rs.getInt(1), rs.getString(2), rs.getFloat(3), rs.getFloat(4),rs.getInt(5), rs.getDate(6), proveedor, categoria,est);
                 resp.put(articulo.getId(), articulo);
             }
