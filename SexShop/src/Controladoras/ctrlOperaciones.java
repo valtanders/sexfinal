@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class ctrlOperaciones {
     BDOperaciones bdoperaciones = BDOperaciones.getIntance();
     
-    public void cargaOperacion(CabOperacion cabOp, ArrayList detalle, int keyCaja) throws SQLException{
-        bdoperaciones.cargaOperacion(cabOp, detalle, keyCaja);
+    public void cargaOperacion(CabOperacion cabOp, ArrayList detalle, int keyCaja, String mp, int numero) throws SQLException{
+        bdoperaciones.cargaOperacion(cabOp, detalle, keyCaja, mp, numero);
     }
 }

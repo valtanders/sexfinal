@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -36,6 +37,7 @@ public class ModificaProveedor extends javax.swing.JDialog {
         super(parent, modal);
         this.setTitle("Modificar Proveedor");
         initComponents();
+        this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
         this.idproveedor = idproveedor;
         rbgEstado.add(rbActivo);
         rbgEstado.add(rbNoActivo);

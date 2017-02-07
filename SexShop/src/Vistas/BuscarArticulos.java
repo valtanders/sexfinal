@@ -6,14 +6,23 @@
 package Vistas;
 
 import Modelos.Articulo;
+import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.RowFilter;
+import javax.swing.RowSorter;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 /**
@@ -33,6 +42,7 @@ public class BuscarArticulos extends javax.swing.JDialog {
     public BuscarArticulos(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
     }
 
     public BuscarArticulos(java.awt.Frame parent, boolean modal, ConcurrentHashMap listaarti, String cat) {
@@ -58,7 +68,19 @@ public class BuscarArticulos extends javax.swing.JDialog {
                 }
             }
         }
+        TableCellRenderer render = new DefaultTableCellRenderer() {
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel l = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                l.setHorizontalAlignment(SwingConstants.LEFT);
+                return l;
+            }
+        };
+        RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(dtmarti);
+        tblArticulos.setRowSorter(sorter);
         tblArticulos.setModel(dtmarti);
+        tblArticulos.getColumnModel().getColumn(0).setCellRenderer(render);
+        tblArticulos.getRowSorter().toggleSortOrder(0);
         tblArticulos.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 int fila = tblArticulos.rowAtPoint(e.getPoint());
@@ -67,17 +89,20 @@ public class BuscarArticulos extends javax.swing.JDialog {
                     articulo = (Articulo) listaArticulos.get(tblArticulos.getModel().getValueAt(fila, 0));
                     cantidad = (Integer) jspCantidad.getValue();
                 }
-                if (articulo.getCantidad() < cantidad) {
-                    int resp = JOptionPane.showConfirmDialog(null, "Cantidad ingresada supera la existencia, ¿Continua?", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                    if (resp == JOptionPane.YES_OPTION) {
-                        esto.dispose();
+                if (cat.equals("venta")) {
+                    if (articulo.getCantidad() < cantidad) {
+                        int resp = JOptionPane.showConfirmDialog(null, "Cantidad ingresada supera la existencia, ¿Continua?", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        if (resp == JOptionPane.YES_OPTION) {
+                            esto.dispose();
+                        } else {
+                            articulo = null;
+                            cantidad = 1;
+                        }
                     } else {
-                        articulo = null;
-                        cantidad = 1;
+                        esto.dispose();
                     }
-                } else {
+                } else
                     esto.dispose();
-                }
             }
 
         });

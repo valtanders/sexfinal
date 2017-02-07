@@ -12,6 +12,7 @@ import Modelos.Estado;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -38,6 +39,7 @@ public class ModificaCliente extends javax.swing.JDialog {
         super(parent, modal);
         this.setTitle("Modificar Cliente");
         initComponents();
+        this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
         idcliente = idcli;
         btnGrupo.add(rbModClienteActivo);
         btnGrupo.add(rbModClienteNoActivo);

@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
@@ -40,13 +41,17 @@ public class BuscarCliente extends javax.swing.JDialog {
         super(parent, modal);
         this.setTitle("Buscar Clientes");
         initComponents();
+        this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
         this.listaclientes = listaclientes;
         esto = this;
         DefaultTableModel dtm = new DefaultTableModel(new Object[] { "Codigo", "Apellido","Nombre", "Direccion" }, 0) {public boolean isCellEditable(int rowIndex,int columnIndex){return false;}};
                 for (Iterator it = listaclientes.entrySet().iterator(); it.hasNext();) {
                     ConcurrentHashMap.Entry<?,?> entry = (ConcurrentHashMap.Entry<?,?>) it.next();
                     if(((Cliente)entry.getValue()).getEstado().getId() != 2)
-                        dtm.addRow(new Object[] {entry.getKey(), ((Cliente)entry.getValue()).getApellido().toUpperCase(), ((Cliente)entry.getValue()).getNombre(),((Cliente)entry.getValue()).getDireccion()});
+                        if (((Cliente)entry.getValue()).getApellido() != null)
+                            dtm.addRow(new Object[] {entry.getKey(), ((Cliente)entry.getValue()).getApellido().toUpperCase(), ((Cliente)entry.getValue()).getNombre(),((Cliente)entry.getValue()).getDireccion()});
+                        else
+                            dtm.addRow(new Object[] {entry.getKey(), ((Cliente)entry.getValue()).getApellido(), ((Cliente)entry.getValue()).getNombre(),((Cliente)entry.getValue()).getDireccion()});
                     
                 }
                 tblClientes.setModel(dtm);

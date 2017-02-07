@@ -13,6 +13,7 @@ import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -27,6 +28,7 @@ public class CumplesF extends javax.swing.JFrame {
     public CumplesF(ConcurrentHashMap lista) {
         this.setTitle("Cumpleaños del día");
         initComponents();
+        this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
         this.setLocationRelativeTo(null);
 
         DefaultTableModel dtcumple = new DefaultTableModel(new Object[]{"Codigo", "Apellido", "Nombre", "Años cumplidos"}, 0) {

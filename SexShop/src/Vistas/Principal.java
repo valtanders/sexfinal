@@ -12,6 +12,7 @@ import Controladoras.ctrlABMUsuarios;
 import Controladoras.ctrlAlquiler;
 import Controladoras.ctrlCaja;
 import Controladoras.ctrlOperaciones;
+import Controladoras.ctrlTransaccion;
 import Modelos.Articulo;
 import Modelos.Alquiler;
 import Modelos.Caja;
@@ -43,6 +44,7 @@ import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -82,6 +84,7 @@ public class Principal extends javax.swing.JFrame {
     private ctrlCaja ctrlcaja = new ctrlCaja();
     private ctrlAlquiler ctrlalquiler = new ctrlAlquiler();
     private ctrlOperaciones ctrloperaciones = new ctrlOperaciones();
+    private ctrlTransaccion ctrltransaccion = new ctrlTransaccion();
 
     private int idCliente;
     private int idArticulo;
@@ -97,6 +100,8 @@ public class Principal extends javax.swing.JFrame {
     private int filaSeleccionadaEgreso;
     private int keyCajaAper;
     private int iddetalle;
+    private int numVenta;
+    private int numAlquiler;
     private float totalVentas;
     private float totalAlquiler;
     private float totalCaja;
@@ -119,6 +124,7 @@ public class Principal extends javax.swing.JFrame {
         this.getContentPane().setBackground(Color.WHITE);
         this.setTitle("Salesforce - 3N Consulting");
         initComponents();
+        this.setIconImage(new ImageIcon(getClass().getResource("../imagenes/3n_ico.png")).getImage());
         this.setSize(800, 600);
         this.user = user;
         cbxArticulosProveedores.removeAllItems();
@@ -134,6 +140,12 @@ public class Principal extends javax.swing.JFrame {
         btnPeliculasFitro.add(rdbPeliculasCodigo);
         btnPeliculasFitro.add(rdbPeliculasTitulo);
         rdbPeliculasCodigo.setSelected(true);
+        btnVentaPago.add(rdbVentaContado);
+        btnVentaPago.add(rdbVentaCtaCte);
+        rdbVentaContado.setSelected(true);
+        btnAlquilerPago.add(rdbAlquilerContado);
+        btnAlquilerPago.add(rdbAlquilerCtaCte);
+        rdbAlquilerCtaCte.setSelected(true);
         lblClienteEstado.setHorizontalAlignment(SwingConstants.CENTER);
         lblArticulosActivo.setHorizontalAlignment(SwingConstants.CENTER);
         SimpleDateFormat fechaformat = new SimpleDateFormat("dd/MM/yyyy");
@@ -167,9 +179,9 @@ public class Principal extends javax.swing.JFrame {
         }
         if (caja == null) {
             JOptionPane.showMessageDialog(null, "Debe realizar una apertura de caja antes de continuar", "Error", JOptionPane.ERROR_MESSAGE);
-            TabContent.setEnabledAt(TabContent.indexOfTab("VENTA"), false);
-            TabContent.setEnabledAt(TabContent.indexOfTab("ALQUILER"), false);
-            TabContent.setSelectedIndex(3);
+            TabDevoluciones.setEnabledAt(TabDevoluciones.indexOfTab("VENTA"), false);
+            TabDevoluciones.setEnabledAt(TabDevoluciones.indexOfTab("ALQUILER"), false);
+            TabDevoluciones.setSelectedIndex(3);
             btnCajaCierre.setEnabled(false);
             txtCajaMontoCierre.setEnabled(false);
             txtCajaMontoIngr.setEnabled(false);
@@ -212,6 +224,18 @@ public class Principal extends javax.swing.JFrame {
                 lblCajaFechaAper.setText(fechaformat.format(aper));
             }
         }
+        numAlquiler = ctrltransaccion.traeUltimoNumero(1);
+        numVenta = ctrltransaccion.traeUltimoNumero(2);
+        txtVentasPV.setText("01");
+        txtAlquilerPV.setText("01");
+        if (numAlquiler > 0)
+            txtAlquilerNumero.setText(String.format("%010d", numAlquiler + 1));
+        else
+            txtAlquilerNumero.setText(String.format("%010d", 1));
+        if (numVenta > 0)
+            txtVentasNumero.setText(String.format("%010d", numVenta + 1));
+        else
+            txtVentasNumero.setText(String.format("%010d", 1));
         try {
             listaClientesCumple = ctrlclientes.traeCumpleanieros();
         } catch (SQLException ex) {
@@ -221,6 +245,12 @@ public class Principal extends javax.swing.JFrame {
             cumples = new CumplesF(listaClientesCumple);
             cumples.setVisible(true);
         }
+        DefaultTableModel dtdevoluciones = new DefaultTableModel(new Object[]{"Cliente","Titulo","Fecha de alquiler","Fecha de devolucion"}, 0){
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return false;
+            }
+        };
+        tblDevoluciones.setModel(dtdevoluciones);
         DefaultTableModel dtventas = new DefaultTableModel(new Object[]{"Codigo", "Descripcion", "Precio", "Cantidad", "total"}, 0) {
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return false;
@@ -397,13 +427,17 @@ public class Principal extends javax.swing.JFrame {
                     return l;
                 }
             };
-            
+
             RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(dtmpeli);
+            RowSorter<TableModel> sorterart = new TableRowSorter<TableModel>(dtmarti);
             tblPeliculasTodos.setRowSorter(sorter);
+            tblArticulosTodos.setRowSorter(sorterart);
             tblArticulosTodos.setModel(dtmarti);
             tblPeliculasTodos.setModel(dtmpeli);
-            tblPeliculasTodos.getColumnModel().getColumn(0).setCellRenderer(render); 
+            tblPeliculasTodos.getColumnModel().getColumn(0).setCellRenderer(render);
             tblPeliculasTodos.getRowSorter().toggleSortOrder(0);
+            tblArticulosTodos.getColumnModel().getColumn(0).setCellRenderer(render);
+            tblArticulosTodos.getRowSorter().toggleSortOrder(0);
             tblArticulosTodos.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     SimpleDateFormat fechaformat = new SimpleDateFormat("dd/MM/yyyy");
@@ -642,9 +676,9 @@ public class Principal extends javax.swing.JFrame {
                 tblUsuariosTodos.setModel(dtmuser);
             }
         } else {
-            TabContent.setEnabledAt(TabContent.indexOfTab("USUARIOS"), false);
-            TabContent.setEnabledAt(TabContent.indexOfTab("PROVEEDORES"), false);
-            TabContent.setEnabledAt(TabContent.indexOfTab("CLIENTES"), false);
+            TabDevoluciones.setEnabledAt(TabDevoluciones.indexOfTab("USUARIOS"), false);
+            TabDevoluciones.setEnabledAt(TabDevoluciones.indexOfTab("PROVEEDORES"), false);
+            TabDevoluciones.setEnabledAt(TabDevoluciones.indexOfTab("CLIENTES"), false);
         }
 
     }
@@ -660,8 +694,10 @@ public class Principal extends javax.swing.JFrame {
         btnClientesFiltro = new javax.swing.ButtonGroup();
         btnArticulosFiltro = new javax.swing.ButtonGroup();
         btnPeliculasFitro = new javax.swing.ButtonGroup();
+        btnAlquilerPago = new javax.swing.ButtonGroup();
+        btnVentaPago = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
-        TabContent = new javax.swing.JTabbedPane();
+        TabDevoluciones = new javax.swing.JTabbedPane();
         tabVenta = new javax.swing.JPanel();
         panelVentas = new javax.swing.JPanel();
         jPanel9 = new javax.swing.JPanel();
@@ -687,6 +723,8 @@ public class Principal extends javax.swing.JFrame {
         lblCodigoClientellenar = new javax.swing.JLabel();
         lblNombreClientellenar = new javax.swing.JLabel();
         lblVentasCumple = new javax.swing.JLabel();
+        rdbVentaContado = new javax.swing.JRadioButton();
+        rdbVentaCtaCte = new javax.swing.JRadioButton();
         jPanel12 = new javax.swing.JPanel();
         jLabel65 = new javax.swing.JLabel();
         txtVentasCodArti = new javax.swing.JTextField();
@@ -726,6 +764,8 @@ public class Principal extends javax.swing.JFrame {
         lblCodigoClientellenaralq = new javax.swing.JLabel();
         lblNombreClientellenaralq = new javax.swing.JLabel();
         lblAlquilerCumple = new javax.swing.JLabel();
+        rdbAlquilerCtaCte = new javax.swing.JRadioButton();
+        rdbAlquilerContado = new javax.swing.JRadioButton();
         jPanel18 = new javax.swing.JPanel();
         jLabel78 = new javax.swing.JLabel();
         txtAlquilerCodArti = new javax.swing.JTextField();
@@ -974,6 +1014,11 @@ public class Principal extends javax.swing.JFrame {
         jScrollPane14 = new javax.swing.JScrollPane();
         tblPreciosAlqui = new javax.swing.JTable();
         jLabel92 = new javax.swing.JLabel();
+        jPanel24 = new javax.swing.JPanel();
+        jPanel25 = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        tblDevoluciones = new javax.swing.JTable();
+        jPanel26 = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -1112,17 +1157,27 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
+        rdbVentaContado.setText("Contado");
+
+        rdbVentaCtaCte.setText("Cuenta Corriente");
+
         javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
         jPanel11.setLayout(jPanel11Layout);
         jPanel11Layout.setHorizontalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel49)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtVentasCodigoCli, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnVentasBuscarCli)
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel11Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel49)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtVentasCodigoCli, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnVentasBuscarCli))
+                    .addGroup(jPanel11Layout.createSequentialGroup()
+                        .addComponent(rdbVentaContado)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(rdbVentaCtaCte)))
                 .addGap(42, 42, 42)
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel11Layout.createSequentialGroup()
@@ -1145,9 +1200,9 @@ public class Principal extends javax.swing.JFrame {
                     .addGroup(jPanel11Layout.createSequentialGroup()
                         .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(lblCodigoCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
-                            .addComponent(lblCodigoClientellenar, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                            .addComponent(lblCodigoClientellenar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(lblVentasCumple, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                         .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblNombreCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblNombreClientellenar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1157,7 +1212,13 @@ public class Principal extends javax.swing.JFrame {
                             .addComponent(jLabel49)
                             .addComponent(txtVentasCodigoCli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnVentasBuscarCli))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(rdbVentaCtaCte)
+                            .addComponent(rdbVentaContado))
+                        .addContainerGap())))
         );
 
         jLabel65.setText("Codigo Articulo: ");
@@ -1299,10 +1360,10 @@ public class Principal extends javax.swing.JFrame {
                     .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(51, 51, 51))
         );
@@ -1324,7 +1385,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        TabContent.addTab("VENTA", tabVenta);
+        TabDevoluciones.addTab("VENTA", tabVenta);
 
         jLabel55.setText("Ticket");
 
@@ -1444,18 +1505,28 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
+        rdbAlquilerCtaCte.setText("Cuenta Corriente");
+
+        rdbAlquilerContado.setText("Contado");
+
         javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
         jPanel17.setLayout(jPanel17Layout);
         jPanel17Layout.setHorizontalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel17Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel60)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtAlquilerCodigoCli, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel17Layout.createSequentialGroup()
+                        .addComponent(rdbAlquilerContado)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(rdbAlquilerCtaCte))
+                    .addGroup(jPanel17Layout.createSequentialGroup()
+                        .addComponent(jLabel60)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtAlquilerCodigoCli, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnVentasBuscarCli1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnVentasBuscarCli1)
-                .addGap(48, 48, 48)
                 .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel17Layout.createSequentialGroup()
                         .addComponent(lblNombreClientealq, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1471,9 +1542,19 @@ public class Principal extends javax.swing.JFrame {
         );
         jPanel17Layout.setVerticalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel17Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel17Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel17Layout.createSequentialGroup()
+                        .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel60)
+                            .addComponent(txtAlquilerCodigoCli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnVentasBuscarCli1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(rdbAlquilerCtaCte))
+                    .addGroup(jPanel17Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(rdbAlquilerContado))
                     .addGroup(jPanel17Layout.createSequentialGroup()
                         .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel17Layout.createSequentialGroup()
@@ -1485,13 +1566,7 @@ public class Principal extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblNombreClientealq, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblNombreClientellenaralq, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel17Layout.createSequentialGroup()
-                        .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel60)
-                            .addComponent(txtAlquilerCodigoCli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnVentasBuscarCli1))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addComponent(lblNombreClientellenaralq, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(4, 4, 4))
         );
 
@@ -1603,7 +1678,7 @@ public class Principal extends javax.swing.JFrame {
                     .addComponent(txtAlquilerCodArti, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAlquilerBucarArti))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(12, 12, 12))
@@ -1632,10 +1707,10 @@ public class Principal extends javax.swing.JFrame {
                     .addComponent(jPanel16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(63, Short.MAX_VALUE))
+                .addContainerGap(57, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout tabAlquilerLayout = new javax.swing.GroupLayout(tabAlquiler);
@@ -1655,7 +1730,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        TabContent.addTab("ALQUILER", tabAlquiler);
+        TabDevoluciones.addTab("ALQUILER", tabAlquiler);
 
         jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel5.setPreferredSize(new java.awt.Dimension(365, 574));
@@ -1962,7 +2037,6 @@ public class Principal extends javax.swing.JFrame {
                                     .addComponent(lblClientesId, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tabClientesLayout.createSequentialGroup()
-                                .addGap(0, 0, 0)
                                 .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(tabClientesLayout.createSequentialGroup()
                                         .addGroup(tabClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2016,7 +2090,7 @@ public class Principal extends javax.swing.JFrame {
                 .addGap(88, 88, 88))
         );
 
-        TabContent.addTab("CLIENTES", tabClientes);
+        TabDevoluciones.addTab("CLIENTES", tabClientes);
 
         jLabel50.setText("Datos Apertura");
 
@@ -2362,7 +2436,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap(65, Short.MAX_VALUE))
         );
 
-        TabContent.addTab("CAJA", tabCaja);
+        TabDevoluciones.addTab("CAJA", tabCaja);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel1.setPreferredSize(new java.awt.Dimension(365, 574));
@@ -2469,7 +2543,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap(77, Short.MAX_VALUE))
         );
 
-        TabContent.addTab("USUARIOS", tabUsuarios);
+        TabDevoluciones.addTab("USUARIOS", tabUsuarios);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel2.setPreferredSize(new java.awt.Dimension(365, 574));
@@ -2773,7 +2847,7 @@ public class Principal extends javax.swing.JFrame {
                 .addGap(78, 78, 78))
         );
 
-        TabContent.addTab("ARTICULOS", tabArticulos);
+        TabDevoluciones.addTab("ARTICULOS", tabArticulos);
 
         jPanel20.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel20.setPreferredSize(new java.awt.Dimension(365, 574));
@@ -3036,7 +3110,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap(61, Short.MAX_VALUE))
         );
 
-        TabContent.addTab("PELICULAS", tabPeliculas);
+        TabDevoluciones.addTab("PELICULAS", tabPeliculas);
 
         jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel4.setPreferredSize(new java.awt.Dimension(365, 574));
@@ -3235,7 +3309,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap(83, Short.MAX_VALUE))
         );
 
-        TabContent.addTab("PROVEEDORES", tabProveedores);
+        TabDevoluciones.addTab("PROVEEDORES", tabProveedores);
 
         jLabel93.setText("Codigo Articulo:");
 
@@ -3343,7 +3417,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        TabContent.addTab("STOCK", tabStock);
+        TabDevoluciones.addTab("STOCK", tabStock);
 
         jLabel80.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jLabel80.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -3460,7 +3534,71 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        TabContent.addTab("PRECIO ALQUILER", tabPrecioAlquiler);
+        TabDevoluciones.addTab("PRECIO ALQUILER", tabPrecioAlquiler);
+
+        tblDevoluciones.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane4.setViewportView(tblDevoluciones);
+
+        javax.swing.GroupLayout jPanel26Layout = new javax.swing.GroupLayout(jPanel26);
+        jPanel26.setLayout(jPanel26Layout);
+        jPanel26Layout.setHorizontalGroup(
+            jPanel26Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 239, Short.MAX_VALUE)
+        );
+        jPanel26Layout.setVerticalGroup(
+            jPanel26Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jPanel25Layout = new javax.swing.GroupLayout(jPanel25);
+        jPanel25.setLayout(jPanel25Layout);
+        jPanel25Layout.setHorizontalGroup(
+            jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel25Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 733, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel25Layout.setVerticalGroup(
+            jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel25Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4))
+                .addContainerGap(175, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel24Layout = new javax.swing.GroupLayout(jPanel24);
+        jPanel24.setLayout(jPanel24Layout);
+        jPanel24Layout.setHorizontalGroup(
+            jPanel24Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel24Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel24Layout.setVerticalGroup(
+            jPanel24Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel24Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        TabDevoluciones.addTab("DEVOLUCIONES", jPanel24);
 
         jMenu2.setText("Archivo");
 
@@ -3496,7 +3634,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(14, Short.MAX_VALUE)
-                .addComponent(TabContent, javax.swing.GroupLayout.PREFERRED_SIZE, 1004, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(TabDevoluciones, javax.swing.GroupLayout.PREFERRED_SIZE, 1004, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -3505,7 +3643,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(TabContent, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(TabDevoluciones, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -3546,13 +3684,15 @@ public class Principal extends javax.swing.JFrame {
                     Articulo modificado;
                     DefaultTableModel dtm = (DefaultTableModel) tblPeliculasTodos.getModel();
                     modificado = modart.getModificado();
-                    listaArticulos.put(idPelicula, modificado);
-                    //((Articulo) listaArticulos.get(modificado.getId())).setEstado(modificado.getEstado());
-                    dtm.removeRow(filaSeleccionadaPelicula);
-                    limpiarnfoArtciulos();
-                    dtm.addRow(new Object[]{modificado.getId(), modificado.getDescripcion().toUpperCase(), modificado.getPrecio()});
-                    limpiarDatosPeliculas();
-                    limpiarnfoPeliculas();
+                    if (modificado != null) {
+                        listaArticulos.put(idPelicula, modificado);
+                        //((Articulo) listaArticulos.get(modificado.getId())).setEstado(modificado.getEstado());
+                        dtm.removeRow(filaSeleccionadaPelicula);
+                        limpiarnfoArtciulos();
+                        dtm.addRow(new Object[]{modificado.getId(), modificado.getDescripcion().toUpperCase(), modificado.getPrecio()});
+                        limpiarDatosPeliculas();
+                        limpiarnfoPeliculas();
+                    }
                     idPelicula = 0;
                 }
             });
@@ -3800,6 +3940,7 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_cbxAlquilerVendedoresItemStateChanged
 
     private void btnVentasProcesarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVentasProcesarActionPerformed
+        String mp = "";
         if (clienteVenta == null) {
             JOptionPane.showMessageDialog(null, "seleccione un cliente antes de continuar", "Clente no encontrado", JOptionPane.ERROR_MESSAGE);
         } else {
@@ -3808,8 +3949,11 @@ public class Principal extends javax.swing.JFrame {
             } else {
                 try {
                     // procesa ok
-
-                    ctrloperaciones.cargaOperacion(new CabOperacion(new TipoOperacion(2, "Venta"), clienteVenta, user, new java.util.Date(), ((Usuario) cbxVentasVendedores.getSelectedItem()).getId(), totalVentas), listaDetalleVenta, keyCajaAper);
+                    if (rdbVentaContado.isSelected())
+                        mp = "Contado";
+                    else
+                        mp = "CtaCte";
+                    ctrloperaciones.cargaOperacion(new CabOperacion(new TipoOperacion(2, "Venta"), clienteVenta, user, new java.util.Date(), ((Usuario) cbxVentasVendedores.getSelectedItem()).getId(), totalVentas), listaDetalleVenta, keyCajaAper,mp,Integer.valueOf(txtVentasNumero.getText()));
                     DefaultTableModel dtventas = new DefaultTableModel(new Object[]{"Codigo", "Descripcion", "Precio", "Cantidad", "total"}, 0) {
                         public boolean isCellEditable(int rowIndex, int columnIndex) {
                             return false;
@@ -3832,6 +3976,8 @@ public class Principal extends javax.swing.JFrame {
                     lblCodigoCliente.setText("");
                     lblCodigoClientellenar.setText("");
                     txtVentasTotal.setText("");
+                    int num = Integer.valueOf(txtVentasNumero.getText());
+                    txtVentasNumero.setText("%010d" + num + 1);
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
                 }
@@ -3929,6 +4075,8 @@ public class Principal extends javax.swing.JFrame {
             try {
                 keyCajaAper = ctrlcaja.abrirCaja(ahora, user);
                 ctrlcaja.insertarDetalle(new DetCaja(monto, "Apertura " + fechaformat.format(ahora), new Caja(keyCajaAper), null, "I"));
+                DefaultTableModel dtm = (DefaultTableModel) tblCajaIngresos.getModel();
+                dtm.addRow(new Object[]{keyCajaAper, "Apertura " + fechaformat.format(ahora), monto});
                 totalCaja = monto;
                 btnCajaCierre.setEnabled(true);
                 txtCajaMontoCierre.setEnabled(true);
@@ -3937,8 +4085,8 @@ public class Principal extends javax.swing.JFrame {
                 txtCajaMontoAper.setText("");
                 lblCajaEstado.setText("Caja Abierta");
                 lblCajaEstado.setForeground(Color.green);
-                TabContent.setEnabledAt(TabContent.indexOfTab("VENTA"), true);
-                TabContent.setEnabledAt(TabContent.indexOfTab("ALQUILER"), true);
+                TabDevoluciones.setEnabledAt(TabDevoluciones.indexOfTab("VENTA"), true);
+                TabDevoluciones.setEnabledAt(TabDevoluciones.indexOfTab("ALQUILER"), true);
                 lblCajaFechaAper.setText(fechaformat.format(ahora));
                 if (user.getId() < 10) {
                     lblCajaCodigoVendedor.setText("0" + user.getId());
@@ -3975,8 +4123,8 @@ public class Principal extends javax.swing.JFrame {
             txtCajaMontoCierre.setEnabled(false);
             lblCajaEstado.setText("Caja Cerrada");
             lblCajaEstado.setForeground(Color.red);
-            TabContent.setEnabledAt(TabContent.indexOfTab("VENTA"), false);
-            TabContent.setEnabledAt(TabContent.indexOfTab("ALQUILER"), false);
+            TabDevoluciones.setEnabledAt(TabDevoluciones.indexOfTab("VENTA"), false);
+            TabDevoluciones.setEnabledAt(TabDevoluciones.indexOfTab("ALQUILER"), false);
             lblCajaFechaCierre.setText(fechaformat.format(ahora));
             if (user.getId() < 10) {
                 lblCajaCodigoVendedorCierre.setText("0" + user.getId());
@@ -4027,6 +4175,7 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnStockProcesarActionPerformed
 
     private void btnAlquilerProcesarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlquilerProcesarActionPerformed
+        String mp;
         if (clienteAlqui == null) {
             JOptionPane.showMessageDialog(null, "seleccione un cliente antes de continuar", "Clente no encontrado", JOptionPane.ERROR_MESSAGE);
         } else {
@@ -4035,8 +4184,11 @@ public class Principal extends javax.swing.JFrame {
             } else {
                 try {
                     // procesa ok
-
-                    ctrloperaciones.cargaOperacion(new CabOperacion(new TipoOperacion(1, "Alquiler"), clienteAlqui, user, new java.util.Date(), ((Usuario) cbxVentasVendedores.getSelectedItem()).getId(), totalAlquiler), listaDetalleAlqui, keyCajaAper);
+                    if (rdbAlquilerContado.isSelected())
+                        mp = "Contado";
+                    else
+                        mp = "CtaCte";
+                    ctrloperaciones.cargaOperacion(new CabOperacion(new TipoOperacion(1, "Alquiler"), clienteAlqui, user, new java.util.Date(), ((Usuario) cbxVentasVendedores.getSelectedItem()).getId(), totalAlquiler), listaDetalleAlqui, keyCajaAper,mp,Integer.valueOf(txtAlquilerNumero.getText()));
                     DefaultTableModel dtalqui = new DefaultTableModel(new Object[]{"Codigo", "Descripcion", "Precio", "Cantidad"}, 0) {
                         public boolean isCellEditable(int rowIndex, int columnIndex) {
                             return false;
@@ -4059,6 +4211,8 @@ public class Principal extends javax.swing.JFrame {
                     lblCodigoClientealq.setText("");
                     lblCodigoClientellenaralq.setText("");
                     txtAlquilerTotal.setText("");
+                    int num = Integer.valueOf(txtAlquilerNumero.getText());
+                    txtAlquilerNumero.setText("%010d" + num + 1);
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
                 }
@@ -4458,7 +4612,8 @@ public class Principal extends javax.swing.JFrame {
             ctrlalquiler.updateUltimoPrecio();
             key = ctrlalquiler.cargarPrecio(new Alquiler((float) spinPrecioalqui.getValue(), date, true));
             listaPreciosAlqui.put(key, new Alquiler((float) spinPrecioalqui.getValue(), date, true));
-            dtmPrcioAlqui.setValueAt("No Activo", tblPreciosAlqui.getRowCount() - 1, tblPreciosAlqui.getColumnCount() - 1);
+            if (dtmPrcioAlqui.getRowCount() > 0)
+                dtmPrcioAlqui.setValueAt("No Activo", tblPreciosAlqui.getRowCount() - 1, tblPreciosAlqui.getColumnCount() - 1);
             dtmPrcioAlqui.addRow(new Object[]{(float) spinPrecioalqui.getValue(), formato.format(date), "Activo"});
             tblPreciosAlqui.repaint();
             precioAlqui = (float) spinPrecioalqui.getValue();
@@ -4648,8 +4803,9 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JSpinner SpinArticulosCantidad;
     private javax.swing.JSpinner SpinArticulosPrecio;
     private javax.swing.JSpinner SpinPeliculasPrecio;
-    private javax.swing.JTabbedPane TabContent;
+    private javax.swing.JTabbedPane TabDevoluciones;
     private javax.swing.JButton btnAlquilerBucarArti;
+    private javax.swing.ButtonGroup btnAlquilerPago;
     private javax.swing.JButton btnAlquilerProcesar;
     private java.awt.Button btnArticulosAceptar;
     private javax.swing.JButton btnArticulosBuscar;
@@ -4681,6 +4837,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JButton btnStockBuscar;
     private javax.swing.JButton btnStockProcesar;
     private java.awt.Button btnUsuariosAceptar;
+    private javax.swing.ButtonGroup btnVentaPago;
     private javax.swing.JButton btnVentasBucarArti;
     private javax.swing.JButton btnVentasBuscarCli;
     private javax.swing.JButton btnVentasBuscarCli1;
@@ -4810,6 +4967,9 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel21;
     private javax.swing.JPanel jPanel22;
     private javax.swing.JPanel jPanel23;
+    private javax.swing.JPanel jPanel24;
+    private javax.swing.JPanel jPanel25;
+    private javax.swing.JPanel jPanel26;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
@@ -4827,6 +4987,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane15;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
@@ -4886,12 +5047,16 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JLabel lblVentasCumple;
     private javax.swing.JMenu menuAlquileres;
     private javax.swing.JPanel panelVentas;
+    private javax.swing.JRadioButton rdbAlquilerContado;
+    private javax.swing.JRadioButton rdbAlquilerCtaCte;
     private javax.swing.JRadioButton rdbAriculosCodigo;
     private javax.swing.JRadioButton rdbArticulosDescripcion;
     private javax.swing.JRadioButton rdbClientesApellido;
     private javax.swing.JRadioButton rdbClientesCodigo;
     private javax.swing.JRadioButton rdbPeliculasCodigo;
     private javax.swing.JRadioButton rdbPeliculasTitulo;
+    private javax.swing.JRadioButton rdbVentaContado;
+    private javax.swing.JRadioButton rdbVentaCtaCte;
     private javax.swing.JSpinner spinArticulosCosto;
     private javax.swing.JSpinner spinPeliculasCosto;
     private javax.swing.JSpinner spinPrecioalqui;
@@ -4911,6 +5076,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTable tblCajaEgresos;
     private javax.swing.JTable tblCajaIngresos;
     private javax.swing.JTable tblClientestodos;
+    private javax.swing.JTable tblDevoluciones;
     private javax.swing.JTable tblPeliculasTodos;
     private javax.swing.JTable tblPreciosAlqui;
     private javax.swing.JTable tblProveedoresTodos;

@@ -6,6 +6,7 @@ import java.awt.Color;
 import javax.swing.JOptionPane;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyAdapter;
+import javax.swing.ImageIcon;
 
 public class Login extends javax.swing.JFrame {
 
@@ -14,6 +15,7 @@ public class Login extends javax.swing.JFrame {
     public Login() {
         this.getContentPane().setBackground(Color.white);
         initComponents();
+        this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
     }
 
     @SuppressWarnings("unchecked")
