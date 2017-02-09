@@ -91,7 +91,7 @@ public class BDOperaciones {
                     sentencia.setTimestamp(4, tsa);
                 }
             }           
-            insert = "insert into detallecaja(concepto, fk_idCabVenta, fk_idCaja,monto) values(?,?,?,?)";
+            insert = "insert into detallecaja(concepto, fk_idCabVenta, fk_idCaja, monto, tipoOperacion) values(?,?,?,?, ?)";
             sentencia = null;
             sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert);
             if (cabOp.getTipoOperacion().getId() == 2) {
@@ -102,6 +102,7 @@ public class BDOperaciones {
             sentencia.setInt(2, cabKey);
             sentencia.setInt(3, keyCaja);
             sentencia.setFloat(4, cabOp.getTotal());
+            sentencia.setString(5, "I");
             sentencia.execute();
             con.commit();
         } catch (SQLException e) {

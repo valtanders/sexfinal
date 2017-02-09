@@ -41,7 +41,7 @@ public class BuscarCliente extends javax.swing.JDialog {
         super(parent, modal);
         this.setTitle("Buscar Clientes");
         initComponents();
-        this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
+        //this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
         this.listaclientes = listaclientes;
         esto = this;
         DefaultTableModel dtm = new DefaultTableModel(new Object[] { "Codigo", "Apellido","Nombre", "Direccion" }, 0) {public boolean isCellEditable(int rowIndex,int columnIndex){return false;}};

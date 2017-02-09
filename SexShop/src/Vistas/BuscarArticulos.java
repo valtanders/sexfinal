@@ -42,7 +42,7 @@ public class BuscarArticulos extends javax.swing.JDialog {
     public BuscarArticulos(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
+        //this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
     }
 
     public BuscarArticulos(java.awt.Frame parent, boolean modal, ConcurrentHashMap listaarti, String cat) {

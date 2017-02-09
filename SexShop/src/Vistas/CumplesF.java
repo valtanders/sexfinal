@@ -28,7 +28,7 @@ public class CumplesF extends javax.swing.JFrame {
     public CumplesF(ConcurrentHashMap lista) {
         this.setTitle("Cumpleaños del día");
         initComponents();
-        this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
+        //this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
         this.setLocationRelativeTo(null);
 
         DefaultTableModel dtcumple = new DefaultTableModel(new Object[]{"Codigo", "Apellido", "Nombre", "Años cumplidos"}, 0) {

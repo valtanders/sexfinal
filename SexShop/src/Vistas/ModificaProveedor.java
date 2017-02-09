@@ -37,7 +37,7 @@ public class ModificaProveedor extends javax.swing.JDialog {
         super(parent, modal);
         this.setTitle("Modificar Proveedor");
         initComponents();
-        this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
+        //this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
         this.idproveedor = idproveedor;
         rbgEstado.add(rbActivo);
         rbgEstado.add(rbNoActivo);

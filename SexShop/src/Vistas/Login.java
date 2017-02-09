@@ -15,7 +15,7 @@ public class Login extends javax.swing.JFrame {
     public Login() {
         this.getContentPane().setBackground(Color.white);
         initComponents();
-        this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
+        //this.setIconImage(new ImageIcon(getClass().getResource("../imagenes/3n_ico.png")).getImage());
     }
 
     @SuppressWarnings("unchecked")

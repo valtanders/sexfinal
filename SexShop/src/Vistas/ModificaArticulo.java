@@ -41,7 +41,7 @@ public class ModificaArticulo extends javax.swing.JDialog {
         super(parent, modal);
         this.setTitle("Modificar Articulo");
         initComponents();
-        this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
+        //this.setIconImage(new ImageIcon(getClass().getResource("../Imagenes/3n_ico.png")).getImage());
         idArticulo = idarti;
         btnGrupoArticulos.add(rbModArticuloActivo);
         btnGrupoArticulos.add(rbModArticuloNoActivo);
