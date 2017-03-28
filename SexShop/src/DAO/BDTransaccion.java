@@ -7,6 +7,7 @@ package DAO;
 
 import com.mysql.jdbc.PreparedStatement;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -15,7 +16,7 @@ import java.sql.SQLException;
  * @author Valtanders
  */
 public class BDTransaccion {
-    
+
     private static BDTransaccion instance;
 
     public static BDTransaccion getIntance() {
@@ -24,15 +25,15 @@ public class BDTransaccion {
         }
         return instance;
     }
-    
+
     public int traeUltimoNumero(int tipo) throws SQLException {
         Conexion oCon = new Conexion();
         Connection con = oCon.getConexion();
         ResultSet rs = null;
         int num = 0;
-        String select = "select max(numero) as numero from transaccion t\n" +
-                          "join operacion o on t.fk_idcabventa = o.idcabventa\n" +
-                          "where o.fk_idtipoperacion = 1";
+        String select = "select max(numero) as numero from transaccion t\n"
+                + "join operacion o on t.fk_idcabventa = o.idcabventa\n"
+                + "where o.fk_idtipoperacion = 1";
         try {
             PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(select);
             rs = sentencia.executeQuery();
@@ -45,6 +46,31 @@ public class BDTransaccion {
         } finally {
             con.close();
             return num;
+        }
+    }
+
+    public String traeMediodePago(int id, Date fecha) throws SQLException {
+        Conexion oCon = new Conexion();
+        Connection con = oCon.getConexion();
+        ResultSet rs = null;
+        String mp = "";
+        String select = "select mediodepago from transaccion t"
+                        + " join operacion o on t.fk_idcabventa = o.idcabventa"
+                        + " where o.fk_idcliente = ? and o.fecha = ?";
+        try {
+            PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(select);
+            sentencia.setInt(1, id);
+            sentencia.setDate(2, fecha);
+            rs = sentencia.executeQuery();
+            while (rs.next()) {
+                mp = rs.getString(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            con.rollback();
+        } finally {
+            con.close();
+            return mp;
         }
     }
 }

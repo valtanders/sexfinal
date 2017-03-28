@@ -57,6 +57,12 @@ public class BuscarArticulos extends javax.swing.JDialog {
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return false;
             }
+            public Class getColumnClass(int c) {
+                if (getValueAt(0, c) != null)
+                    return getValueAt(0, c).getClass();
+                else
+                    return Object.class;
+            }
         };
         for (Iterator it = listaArticulos.entrySet().iterator(); it.hasNext();) {
             ConcurrentHashMap.Entry<?, ?> entry = (ConcurrentHashMap.Entry<?, ?>) it.next();

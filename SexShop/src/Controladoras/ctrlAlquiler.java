@@ -25,8 +25,8 @@ public class ctrlAlquiler {
         bdalquiler.updateUltimoPrecio();
     }
     
-    public void traerUltimoActivo() throws SQLException {
-        bdalquiler.traerUltimoActivo();
+    public Alquiler traerUltimoActivo() throws SQLException {
+        return bdalquiler.traerUltimoActivo();
     }
     
     public ConcurrentHashMap traerTodos() throws SQLException {

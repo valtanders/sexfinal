@@ -58,5 +58,11 @@ public class ctrlABMClientes {
         return bdclientes.traeCumpleanieros();
     }
 
-
+    public ConcurrentHashMap traeHistorico() throws SQLException{
+        return bdclientes.traeHistorico();
+    }
+    
+    public ConcurrentHashMap traeHistoricoPorCliente(int id) throws SQLException {
+        return bdclientes.traeHistoricoPorCliente(id);
+    }
 }

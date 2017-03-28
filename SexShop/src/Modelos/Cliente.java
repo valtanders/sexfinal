@@ -24,7 +24,9 @@ public class Cliente {
     private Date fechanac;
     private Estado estado;
     
-    public Cliente() {};
+    public Cliente() {}
+    
+    public Cliente(int id) {this.idCliente = id;}
     
     public Cliente(int id, DescuentoCli desccli, String notas, String nom, String ape, String direc, String mail, String tel, String dni, Date fecha,Estado est) {
         this.idCliente = id;

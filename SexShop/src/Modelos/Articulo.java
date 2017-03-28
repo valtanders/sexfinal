@@ -24,6 +24,8 @@ public class Articulo {
     
     public Articulo () {}
     
+    public Articulo (int id) {this.id=id;}
+    
     public Articulo (int id, String descripcion, float costo, float precio, int cantidad, Date fechacompra, Proveedor proveedor, Categoria categoria, Estado estado) {
         this.id = id;
         this.descripcion = descripcion;

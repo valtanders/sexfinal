@@ -6,6 +6,7 @@
 package Controladoras;
 
 import DAO.BDTransaccion;
+import java.sql.Date;
 import java.sql.SQLException;
 
 /**
@@ -17,5 +18,9 @@ public class ctrlTransaccion {
     
     public int traeUltimoNumero(int tipo) throws SQLException {
         return bdTransaccion.traeUltimoNumero(tipo);
+    }
+    
+    public String traeMediodePago(int id, Date fecha) throws SQLException {
+        return bdTransaccion.traeMediodePago(id,fecha);
     }
 }

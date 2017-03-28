@@ -63,7 +63,7 @@ public class BDOperaciones {
             sentencia = null;
             sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert);
             sentencia.setString(1, mp);
-            sentencia.setInt(2,numero);
+            sentencia.setInt(2, numero);
             sentencia.execute();
             if (cabOp.getTipoOperacion().getId() == 2) {
                 insert = "Update articulos set cantidad = cantidad - ? where idarticulos = ?";
@@ -75,35 +75,33 @@ public class BDOperaciones {
                     sentencia.execute();
                 }
             } else {
-                insert = "insert into devoluciones values(0,?,?,?,?)";
+                insert = "insert into devoluciones values(0,?,?,?,'0000-00-00')";
                 java.util.Date date = new Date();
                 Timestamp tsh = new Timestamp(date.getTime());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-                calendar.add(Calendar.DAY_OF_YEAR, 2);
-                Timestamp tsa = new Timestamp(calendar.getTimeInMillis());
                 for (int i = 0; detalle.size() > i; i++) {
                     sentencia = null;
                     sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert);
                     sentencia.setInt(1, cabOp.getCliente().getIdCliente());
                     sentencia.setInt(2, ((DetOperacion) detalle.get(i)).getArticulo().getId());
                     sentencia.setTimestamp(3, tsh);
-                    sentencia.setTimestamp(4, tsa);
+                    sentencia.execute();
                 }
-            }           
-            insert = "insert into detallecaja(concepto, fk_idCabVenta, fk_idCaja, monto, tipoOperacion) values(?,?,?,?, ?)";
-            sentencia = null;
-            sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert);
-            if (cabOp.getTipoOperacion().getId() == 2) {
-                sentencia.setString(1, "Venta");
-            } else {
-                sentencia.setString(1, "Alquiler");
             }
-            sentencia.setInt(2, cabKey);
-            sentencia.setInt(3, keyCaja);
-            sentencia.setFloat(4, cabOp.getTotal());
-            sentencia.setString(5, "I");
-            sentencia.execute();
+            if (mp.equals("Contado")) {
+                insert = "insert into detallecaja(concepto, fk_idCabVenta, fk_idCaja, monto, tipoOperacion) values(?,?,?,?, ?)";
+                sentencia = null;
+                sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(insert);
+                if (cabOp.getTipoOperacion().getId() == 2) {
+                    sentencia.setString(1, "Venta");
+                } else {
+                    sentencia.setString(1, "Alquiler");
+                }
+                sentencia.setInt(2, cabKey);
+                sentencia.setInt(3, keyCaja);
+                sentencia.setFloat(4, cabOp.getTotal());
+                sentencia.setString(5, "I");
+                sentencia.execute();
+            }
             con.commit();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -112,4 +110,5 @@ public class BDOperaciones {
             con.close();
         }
     }
+
 }
