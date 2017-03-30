@@ -139,7 +139,7 @@ public class Principal extends javax.swing.JFrame {
         this.setTitle("Salesforce - 3N Consulting");
         initComponents();
         //this.setIconImage(new ImageIcon(getClass().getResource("../imagenes/3n_ico.png")).getImage());
-        this.setSize(800, 600);
+        //this.setSize(800, 700);
         /*DisplayMode mode = this.getGraphicsConfiguration().getDevice().getDisplayMode();
         Insets insets = Toolkit.getDefaultToolkit().getScreenInsets(this.getGraphicsConfiguration());
         this.setMaximizedBounds(new Rectangle(
@@ -327,7 +327,7 @@ public class Principal extends javax.swing.JFrame {
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
         }
-        DefaultTableModel dtmhistorico = new DefaultTableModel(new Object[]{"", "Cliente", "Titulo", "Fecha de alquiler", "Fecha de devolucion"}, 0) {
+        DefaultTableModel dtmhistorico = new DefaultTableModel(new Object[]{"Codigo", "Cliente", "Titulo", "Fecha de alquiler", "Fecha de devolucion"}, 0) {
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return false;
             }
@@ -335,22 +335,22 @@ public class Principal extends javax.swing.JFrame {
         if (listahistorico != null) {
             for (Iterator it = listahistorico.entrySet().iterator(); it.hasNext();) {
                 ConcurrentHashMap.Entry<?, ?> entry = (ConcurrentHashMap.Entry<?, ?>) it.next();
-                dtmhistorico.addRow(new Object[]{entry.getKey(), ((Devolucion) entry.getValue()).getCliente().getApellido().toUpperCase(), ((Devolucion) entry.getValue()).getArticulo().getDescripcion().toUpperCase(), fechaformat.format(((Devolucion) entry.getValue()).getFechaAlqui()), null});
+                dtmhistorico.addRow(new Object[]{((Devolucion) entry.getValue()).getCliente().getIdCliente(), ((Devolucion) entry.getValue()).getCliente().getApellido().toUpperCase(), ((Devolucion) entry.getValue()).getArticulo().getDescripcion().toUpperCase(), fechaformat.format(((Devolucion) entry.getValue()).getFechaAlqui()), fechaformat.format(((Devolucion) entry.getValue()).getFechaDevol())});
             }
         }
 
         tblHistorico.setModel(dtmhistorico);
-        tblHistorico.getColumnModel().getColumn(0).setMaxWidth(0);
+        /*tblHistorico.getColumnModel().getColumn(0).setMaxWidth(0);
         tblHistorico.getColumnModel().getColumn(0).setMinWidth(0);
         tblHistorico.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
-        tblHistorico.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
+        tblHistorico.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);*/
 
         try {
             listadevoluciones = ctrldevoluciones.traerDevolucionesPend();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
         }
-        DefaultTableModel dtdevoluciones = new DefaultTableModel(new Object[]{"", "Cliente", "Titulo", "Fecha de alquiler", "Fecha de devolucion"}, 0) {
+        DefaultTableModel dtdevoluciones = new DefaultTableModel(new Object[]{"", "Codigo", "Cliente", "Titulo", "Fecha de alquiler", "Fecha de devolucion"}, 0) {
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return false;
             }
@@ -358,7 +358,7 @@ public class Principal extends javax.swing.JFrame {
         if (listadevoluciones != null) {
             for (Iterator it = listadevoluciones.entrySet().iterator(); it.hasNext();) {
                 ConcurrentHashMap.Entry<?, ?> entry = (ConcurrentHashMap.Entry<?, ?>) it.next();
-                dtdevoluciones.addRow(new Object[]{entry.getKey(), ((Devolucion) entry.getValue()).getCliente().getApellido().toUpperCase(), ((Devolucion) entry.getValue()).getArticulo().getDescripcion().toUpperCase(), fechaformat.format(((Devolucion) entry.getValue()).getFechaAlqui()), null});
+                dtdevoluciones.addRow(new Object[]{entry.getKey(), ((Devolucion) entry.getValue()).getCliente().getIdCliente(), ((Devolucion) entry.getValue()).getCliente().getApellido().toUpperCase(), ((Devolucion) entry.getValue()).getArticulo().getDescripcion().toUpperCase(), fechaformat.format(((Devolucion) entry.getValue()).getFechaAlqui()), ""});
             }
         }
 
@@ -401,7 +401,7 @@ public class Principal extends javax.swing.JFrame {
                         if (strDays[calendar.get(Calendar.DAY_OF_WEEK) - 1].equals("Viernes") && detalle.size() > 1) {
                             if (diferencia > 3) {
                                 recargo = (diferencia - 2) * (float) jsRecargo.getValue();
-                                lblDevolucionesTotRec.setText(String.valueOf(recargo * detalle.size()));
+                                lblDevolucionesTotRec.setText("$" + String.valueOf(recargo * detalle.size()));
                             } else {
                                 lblDevolucionesTotRec.setText("0");
                             }
@@ -409,7 +409,7 @@ public class Principal extends javax.swing.JFrame {
                         } else {
                             if (diferencia > 2) {
                                 recargo = (diferencia - 2) * (float) jsRecargo.getValue();
-                                lblDevolucionesTotRec.setText(String.valueOf(recargo * detalle.size()));
+                                lblDevolucionesTotRec.setText("$" + String.valueOf(recargo * detalle.size()));
                             } else {
                                 lblDevolucionesTotRec.setText("0");
                             }
@@ -418,7 +418,11 @@ public class Principal extends javax.swing.JFrame {
                         if (mp.equals("CtaCte")) {
                             lblDevolucionesTotal.setText("$" + String.valueOf(recargo + (alqui.getPrecio() * detalle.size())));
                         } else {
-                            lblDevolucionesTotal.setText("$" + String.valueOf(alqui.getPrecio() * detalle.size()));
+                            if (mp.equals("")) {
+                                lblDevolucionesTotal.setText("$" + String.valueOf(recargo + alqui.getPrecio() * detalle.size()));
+                            } else {
+                                lblDevolucionesTotal.setText("$" + String.valueOf(alqui.getPrecio() * detalle.size()));
+                            }
                         }
                     } else {
                         JOptionPane.showMessageDialog(null, "La fecha de devolucion no puede ser posterior a la de alquiler", "Invalido", JOptionPane.ERROR_MESSAGE);
@@ -1538,7 +1542,7 @@ public class Principal extends javax.swing.JFrame {
                         .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtVentasRecargos, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
                             .addComponent(jLabel52, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 494, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 615, Short.MAX_VALUE)
                         .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtVentasTotal)
                             .addComponent(jLabel53))
@@ -1700,7 +1704,7 @@ public class Principal extends javax.swing.JFrame {
                 .addComponent(jLabel58)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtAlquilerSaldoCC, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 236, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 357, Short.MAX_VALUE)
                 .addComponent(jLabel59)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtAlquilerFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1847,7 +1851,7 @@ public class Principal extends javax.swing.JFrame {
         jPanel19Layout.setHorizontalGroup(
             jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel19Layout.createSequentialGroup()
-                .addContainerGap(724, Short.MAX_VALUE)
+                .addContainerGap(845, Short.MAX_VALUE)
                 .addGroup(jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtAlquilerTotal)
                     .addComponent(jLabel64))
@@ -2395,7 +2399,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 619, Short.MAX_VALUE)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 740, Short.MAX_VALUE)
                 .addContainerGap())
         );
         tabUsuariosLayout.setVerticalGroup(
@@ -3122,7 +3126,7 @@ public class Principal extends javax.swing.JFrame {
                                 .addComponent(lblProveedorNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGroup(tabProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tabProveedoresLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 112, Short.MAX_VALUE)
                                 .addComponent(btnProveedorEliminar)
                                 .addGap(133, 133, 133))
                             .addGroup(tabProveedoresLayout.createSequentialGroup()
@@ -3261,7 +3265,7 @@ public class Principal extends javax.swing.JFrame {
             .addGroup(jPanel23Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane15, javax.swing.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
+                    .addComponent(jScrollPane15, javax.swing.GroupLayout.DEFAULT_SIZE, 820, Short.MAX_VALUE)
                     .addGroup(jPanel23Layout.createSequentialGroup()
                         .addGroup(jPanel23Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel23Layout.createSequentialGroup()
@@ -3412,7 +3416,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel14Layout.createSequentialGroup()
-                        .addComponent(jScrollPane14, javax.swing.GroupLayout.DEFAULT_SIZE, 681, Short.MAX_VALUE)
+                        .addComponent(jScrollPane14, javax.swing.GroupLayout.DEFAULT_SIZE, 802, Short.MAX_VALUE)
                         .addContainerGap())
                     .addComponent(jLabel92, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
@@ -3504,29 +3508,27 @@ public class Principal extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel27Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(rdbDevolucionesFecha)
-                    .addComponent(jdcDevolucionesFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnDevolucionesBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel27Layout.createSequentialGroup()
+                        .addComponent(jdcDevolucionesFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDevolucionesBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         jPanel27Layout.setVerticalGroup(
             jPanel27Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel27Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel27Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel22)
+                    .addComponent(rdbDevolucionesCle)
+                    .addComponent(rdbDevolucionesTit)
+                    .addComponent(rdbDevolucionesFecha))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel27Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel27Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel27Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel22)
-                            .addComponent(rdbDevolucionesCle)
-                            .addComponent(rdbDevolucionesTit)
-                            .addComponent(rdbDevolucionesFecha))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel27Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtDevolucionesFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jdcDevolucionesFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel27Layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(btnDevolucionesBuscar)))
-                .addContainerGap(43, Short.MAX_VALUE))
+                    .addComponent(txtDevolucionesFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jdcDevolucionesFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDevolucionesBuscar))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
         btnDevolucionesProcesar.setText("Procesar");
@@ -3619,20 +3621,21 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel25Layout.createSequentialGroup()
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 978, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel25Layout.createSequentialGroup()
-                        .addComponent(jLabel101)
+                        .addComponent(jPanel27, javax.swing.GroupLayout.PREFERRED_SIZE, 514, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblDevolucionesCli, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel29, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnDevolucionesProcesar, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPanel28, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel25Layout.createSequentialGroup()
-                        .addComponent(jPanel27, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel28, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 978, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel25Layout.createSequentialGroup()
+                                .addComponent(jLabel101)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblDevolucionesCli, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel29, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnDevolucionesProcesar, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel26, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(746, 746, 746))
@@ -3652,20 +3655,17 @@ public class Principal extends javax.swing.JFrame {
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGroup(jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel25Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel25Layout.createSequentialGroup()
-                                .addComponent(btnDevolucionesProcesar, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
-                                .addGap(90, 90, 90))
-                            .addGroup(jPanel25Layout.createSequentialGroup()
-                                .addGroup(jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel101)
-                                    .addComponent(lblDevolucionesCli, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                    .addGroup(jPanel25Layout.createSequentialGroup()
                         .addGap(8, 8, 8)
                         .addComponent(jPanel29, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(0, 114, Short.MAX_VALUE))
+                    .addGroup(jPanel25Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel101)
+                                .addComponent(lblDevolucionesCli, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btnDevolucionesProcesar))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         javax.swing.GroupLayout jPanel24Layout = new javax.swing.GroupLayout(jPanel24);
@@ -3674,15 +3674,15 @@ public class Principal extends javax.swing.JFrame {
             jPanel24Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel24Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel25, javax.swing.GroupLayout.PREFERRED_SIZE, 990, Short.MAX_VALUE)
+                .addComponent(jPanel25, javax.swing.GroupLayout.PREFERRED_SIZE, 1111, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel24Layout.setVerticalGroup(
             jPanel24Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel24Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel25, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         TabDevoluciones.addTab("DEVOLUCIONES", jPanel24);
@@ -3877,7 +3877,7 @@ public class Principal extends javax.swing.JFrame {
                 .addComponent(jLabel87)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtCajaRetiro, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 121, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 242, Short.MAX_VALUE)
                 .addComponent(jLabel88)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtCajaMontoCierre, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -4112,7 +4112,7 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(tabHistoricoClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel30, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane16, javax.swing.GroupLayout.PREFERRED_SIZE, 978, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(139, Short.MAX_VALUE))
         );
         tabHistoricoClientesLayout.setVerticalGroup(
             tabHistoricoClientesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4156,11 +4156,11 @@ public class Principal extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(14, Short.MAX_VALUE)
-                .addComponent(TabDevoluciones, javax.swing.GroupLayout.PREFERRED_SIZE, 1004, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 818, Short.MAX_VALUE))
+                    .addComponent(TabDevoluciones, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -4344,10 +4344,33 @@ public class Principal extends javax.swing.JFrame {
                         }
                     }
                     if (!esta) {
-                        DefaultTableModel dtm = (DefaultTableModel) tblAlquilerTablaAlqui.getModel();
-                        listaDetalleAlqui.add(new DetOperacion(buscado, precioAlqui, 1));
-                        totalAlquiler += precioAlqui * buscaArticulos.getCantidad();
-                        dtm.addRow(new Object[]{buscado.getId(), buscado.getDescripcion().toUpperCase(), precioAlqui, buscaArticulos.getCantidad()});
+                        if (clienteAlqui != null) {
+                            try {
+                                if (ctrlarticulos.traePeliYaVista(buscado.getId(), clienteAlqui.getIdCliente())) {
+                                    int resp = JOptionPane.showConfirmDialog(null, "Atencion! el cliente ya vio la pelicula " + buscado.getDescripcion() + " ,desea agregarla igualmente? ", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                                    if (resp == JOptionPane.YES_OPTION) {
+                                        DefaultTableModel dtm = (DefaultTableModel) tblAlquilerTablaAlqui.getModel();
+                                        listaDetalleAlqui.add(new DetOperacion(buscado, precioAlqui, 1));
+                                        totalAlquiler += precioAlqui;
+                                        dtm.addRow(new Object[]{buscado.getId(), buscado.getDescripcion().toUpperCase(), buscado.getPrecio(), 1});
+                                        txtAlquilerCodArti.setText("");
+                                    } else {
+                                        txtAlquilerCodArti.setText("");
+                                    }
+                                } else {
+                                    DefaultTableModel dtm = (DefaultTableModel) tblAlquilerTablaAlqui.getModel();
+                                    listaDetalleAlqui.add(new DetOperacion(buscado, precioAlqui, 1));
+                                    totalAlquiler += precioAlqui;
+                                    dtm.addRow(new Object[]{buscado.getId(), buscado.getDescripcion().toUpperCase(), buscado.getPrecio(), 1});
+                                    txtAlquilerCodArti.setText("");
+                                }
+                            } catch (SQLException ex) {
+                                JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+                            }
+
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     } else {
                         JOptionPane.showMessageDialog(null, "El codigo de la pelicula ya fue ingresado", "Codigo repetido", JOptionPane.ERROR_MESSAGE);
                     }
@@ -4376,11 +4399,34 @@ public class Principal extends javax.swing.JFrame {
                             }
                         }
                         if (!esta) {
-                            DefaultTableModel dtm = (DefaultTableModel) tblAlquilerTablaAlqui.getModel();
-                            listaDetalleAlqui.add(new DetOperacion(agregar, precioAlqui, 1));
-                            totalAlquiler += precioAlqui;
-                            dtm.addRow(new Object[]{agregar.getId(), agregar.getDescripcion().toUpperCase(), agregar.getPrecio(), 1});
-                            txtAlquilerCodArti.setText("");
+                            if (clienteAlqui != null) {
+                                try {
+                                    if (ctrlarticulos.traePeliYaVista(agregar.getId(), clienteAlqui.getIdCliente())) {
+                                        int resp = JOptionPane.showConfirmDialog(null, "Atencion! el cliente ya vio la pelicula " + agregar.getDescripcion() + " ,desea agregarla igualmente? ", "Confirmar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                                        if (resp == JOptionPane.YES_OPTION) {
+                                            DefaultTableModel dtm = (DefaultTableModel) tblAlquilerTablaAlqui.getModel();
+                                            listaDetalleAlqui.add(new DetOperacion(agregar, precioAlqui, 1));
+                                            totalAlquiler += precioAlqui;
+                                            dtm.addRow(new Object[]{agregar.getId(), agregar.getDescripcion().toUpperCase(), agregar.getPrecio(), 1});
+                                            txtAlquilerCodArti.setText("");
+                                        } else {
+                                            txtAlquilerCodArti.setText("");
+                                        }
+                                    } else {
+                                        DefaultTableModel dtm = (DefaultTableModel) tblAlquilerTablaAlqui.getModel();
+                                        listaDetalleAlqui.add(new DetOperacion(agregar, precioAlqui, 1));
+                                        totalAlquiler += precioAlqui;
+                                        dtm.addRow(new Object[]{agregar.getId(), agregar.getDescripcion().toUpperCase(), agregar.getPrecio(), 1});
+                                        txtAlquilerCodArti.setText("");
+                                    }
+                                } catch (SQLException ex) {
+                                    JOptionPane.showMessageDialog(null, ex.getMessage(), "MySql", JOptionPane.ERROR_MESSAGE);
+                                }
+
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente", "Error", JOptionPane.ERROR_MESSAGE);
+                            }
+
                         } else {
                             JOptionPane.showMessageDialog(null, "El codigo de la pelicula ya fue ingresado", "Codigo repetido", JOptionPane.ERROR_MESSAGE);
                             txtAlquilerCodArti.selectAll();
@@ -5201,7 +5247,7 @@ public class Principal extends javax.swing.JFrame {
                 }
                 for (Iterator it = listadevoluciones.entrySet().iterator(); it.hasNext();) {
                     ConcurrentHashMap.Entry<?, ?> entry = (ConcurrentHashMap.Entry<?, ?>) it.next();
-                    dtm.addRow(new Object[]{entry.getKey(), ((Devolucion) entry.getValue()).getCliente().getApellido().toUpperCase(), ((Devolucion) entry.getValue()).getArticulo().getDescripcion().toUpperCase(), fechaformat.format(((Devolucion) entry.getValue()).getFechaAlqui()), null});
+                    dtm.addRow(new Object[]{((Devolucion) entry.getValue()).getCliente().getIdCliente(), ((Devolucion) entry.getValue()).getCliente().getApellido().toUpperCase(), ((Devolucion) entry.getValue()).getArticulo().getDescripcion().toUpperCase(), fechaformat.format(((Devolucion) entry.getValue()).getFechaAlqui()), null});
                 }
                 lblDevolucionesCli.setText("");
                 lblDevolucionesTotRec.setText("");
@@ -5219,7 +5265,7 @@ public class Principal extends javax.swing.JFrame {
         trsFiltro = new TableRowSorter(tblDevoluciones.getModel());
         SimpleDateFormat fechaformat = new SimpleDateFormat("dd/MM/yyyy");
         if (rdbDevolucionesCle.isSelected()) {
-            columnaABuscar = 0;
+            columnaABuscar = 1;
             trsFiltro.setRowFilter(RowFilter.regexFilter(txtDevolucionesFiltro.getText(), columnaABuscar));
         } else if (rdbDevolucionesTit.isSelected()) {
             columnaABuscar = 2;
@@ -5425,16 +5471,16 @@ public class Principal extends javax.swing.JFrame {
         histCliente.setVisible(true);
         histCliente.setLocationRelativeTo(this);
         histCliente.addWindowListener(new WindowAdapter() {
-                public void windowClosed(WindowEvent e) {
-                    if(histCliente.isDeudor()) {
-                        JOptionPane.showMessageDialog(null, "El cliente posee peliculas sin devolver", "Atención", JOptionPane.ERROR_MESSAGE);
-                        TabDevoluciones.setSelectedIndex(9);
-                        txtDevolucionesFiltro.setText(String.valueOf(id));
-                        rdbDevolucionesCle.setSelected(true);
-                        btnDevolucionesBuscarActionPerformed(null);
-                    }
+            public void windowClosed(WindowEvent e) {
+                if (histCliente.isDeudor()) {
+                    JOptionPane.showMessageDialog(null, "El cliente posee peliculas sin devolver", "Atención", JOptionPane.ERROR_MESSAGE);
+                    TabDevoluciones.setSelectedIndex(9);
+                    txtDevolucionesFiltro.setText(String.valueOf(id));
+                    rdbDevolucionesCle.setSelected(true);
+                    btnDevolucionesBuscarActionPerformed(null);
                 }
-            });
+            }
+        });
     }
 
     /**

@@ -296,7 +296,7 @@ public class BDClientes implements Interfaz {
                 cliente.setMail(rs.getString(9));
                 cliente.setDni(rs.getString(10));
                 cliente.setFechanac(rs.getDate(11));
-                devolucion = new Devolucion(rs.getInt(1), cliente, articulo, rs.getDate(4), null);
+                devolucion = new Devolucion(rs.getInt(1), cliente, articulo, rs.getDate(4), rs.getDate(5));
                 lista.put(devolucion.getId(), devolucion);
             }
         } catch (SQLException e) {

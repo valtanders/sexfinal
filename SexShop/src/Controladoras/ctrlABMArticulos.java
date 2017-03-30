@@ -51,4 +51,8 @@ public class ctrlABMArticulos {
     public void cargaStock(Articulo articulo) throws SQLException{
         bdarticulos.cargaStock(articulo);
     }
+    
+    public boolean traePeliYaVista(int idPeli, int idCli) throws SQLException {
+        return bdarticulos.traePeliYaVista(idPeli, idCli);
+    }
 }
