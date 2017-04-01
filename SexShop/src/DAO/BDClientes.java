@@ -342,4 +342,41 @@ public class BDClientes implements Interfaz {
             return lista;
         }
     }
+    
+    public ConcurrentHashMap traePendientePorCliente(int id) throws SQLException {
+        Conexion oCon = new Conexion();
+        ResultSet rs = null;
+        ConcurrentHashMap lista = new ConcurrentHashMap();
+        Articulo articulo = null;
+        Cliente cliente = null;
+        Date devol = null;
+        String devolAux = "";
+        Devolucion devolucion = null;
+        oCon.getConexion();
+        String select = "select d.iddevoluciones, d.fk_idarticulos, d.fecha_alqui, d.fecha_devol, c.apellido, a.descripccion \n"
+                + "from devoluciones d\n"
+                + "join cliente c on d.fk_idcliente = c.idcliente\n"
+                + "join articulos a on d.fk_idarticulos = a.idarticulos \n"
+                + "where c.idcliente = ?\n"
+                + "and fecha_devol is null";
+        try {
+            PreparedStatement sentencia = (PreparedStatement) oCon.getConexion().prepareStatement(select);
+            sentencia.setInt(1, id);
+            rs = sentencia.executeQuery();
+            while (rs.next()) {
+                devol = rs.getDate("fecha_devol") != null ? rs.getDate("fecha_devol") : null;
+                articulo = new Articulo(rs.getInt("fk_idarticulos"));
+                articulo.setDescripcion(rs.getString("descripccion"));
+                cliente = new Cliente(id);
+                cliente.setApellido(rs.getString("apellido"));
+                devolucion = new Devolucion(rs.getInt("iddevoluciones"), cliente, articulo, rs.getDate("fecha_alqui"), devol);
+                lista.put(devolucion.getId(), devolucion);
+            }
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            oCon.close();
+            return lista;
+        }
+    }
 }

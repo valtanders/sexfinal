@@ -65,4 +65,8 @@ public class ctrlABMClientes {
     public ConcurrentHashMap traeHistoricoPorCliente(int id) throws SQLException {
         return bdclientes.traeHistoricoPorCliente(id);
     }
+    
+    public ConcurrentHashMap traePendientePorCliente(int id) throws SQLException {
+        return bdclientes.traePendientePorCliente(id);
+    }
 }
